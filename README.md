@@ -1,1 +1,1 @@
-# Griding Satisfaction Bot
+# Grinding Satisfaction Bot
