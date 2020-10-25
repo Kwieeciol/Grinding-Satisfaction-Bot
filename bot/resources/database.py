@@ -9,55 +9,55 @@ session = asyncio.run(new_session())
 
 async def new_order(**kwargs):
     """Creates a new order in the database"""
-    async with session.post(f'{url}/orders/new', data=kwargs) as resp:
+    async with session.post(f'{URL}/orders/new', data=kwargs) as resp:
         return await resp.json()
 
 
 async def assign_order(order: int, discord_id: int):
     """Assigns the given order to the worker"""
-    async with session.patch(f'{url}/orders/{order}/assign', data={'discord_id': discord_id}) as resp:
+    async with session.patch(f'{URL}/orders/{order}/assign', data={'discord_id': discord_id}) as resp:
         return await resp.json()
 
 
 async def set_progress(order: int, amount: int):
     """Changes the amount of an order"""
-    async with session.patch(f'{url}/orders/{order}/progress', data={'progress': amount}) as resp:
+    async with session.patch(f'{URL}/orders/{order}/progress', data={'progress': amount}) as resp:
         return await resp.json()
 
 
 async def edit(order: int, data: dict):
     """Edits the order details"""
-    async with session.patch(f'{url}/orders/{order}/edit', data=data) as resp:
+    async with session.patch(f'{URL}/orders/{order}/edit', data=data) as resp:
         return await resp.json()
 
 
 async def collection(order: int):
     """Puts the order in pending-collection status"""
-    async with session.patch(f'{url}/orders/{order}/collection') as resp:
+    async with session.patch(f'{URL}/orders/{order}/collection') as resp:
         return await resp.json()
 
 
 async def completed(order: int):
     """Changes the status of the order to completed"""
-    async with session.patch(f'{url}/order/{order}/complete') as resp:
+    async with session.patch(f'{URL}/order/{order}/complete') as resp:
         return await resp.json()
 
 
 async def fetch_order(order: int): # NOT IN USE
     """Returns an order data"""
-    async with session.get(f'{url}/orders/{order}') as resp:
+    async with session.get(f'{URL}/orders/{order}') as resp:
         return await resp.json()
 
 
 async def new_customer(data: dict):
     """Adds a new customer to the database"""
-    async with session.post(f'{url}/customers/new', data=data) as resp:
+    async with session.post(f'{URL}/customers/new', data=data) as resp:
         return await resp.json()
 
 
 async def check_customer(discord_id: int):
     """Checks if a customer exists"""
-    async with session.get(f'{url}/customers/{discord_id}') as resp:
+    async with session.get(f'{URL}/customers/{discord_id}') as resp:
         html = await resp.text()
         try:
             data = json.loads(html)
@@ -68,7 +68,7 @@ async def check_customer(discord_id: int):
 
 async def items():
     """Returns all the items available"""
-    async with session.get(f'{url}/prices') as resp:
+    async with session.get(f'{URL}/prices') as resp:
         html = await resp.json()
         items = {item['name'].lower(): [item['price'], item['limit']] for item in html}
         return items
@@ -76,7 +76,7 @@ async def items():
 
 async def storages():
     """Returns all the storages available"""
-    async with session.get(f'{url}.storages') as resp:
+    async with session.get(f'{URL}.storages') as resp:
         html = await resp.json()
         storages = {storage['name'].lower(): [storage['id'], storage['fee']] for storage in html}
         return storages
@@ -84,5 +84,5 @@ async def storages():
 
 async def status(discord_id):
     """Changes the status of the worker"""
-    async with session.patch(f'{url}/employees/{discord_id}/status') as resp:
+    async with session.patch(f'{URL}/employees/{discord_id}/status') as resp:
         return await resp.json()['active']
