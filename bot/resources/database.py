@@ -3,10 +3,13 @@ import asyncio
 import json
 from .constants import URL
 
+__all__ = ['new_order', 'assign_order', 'set_progress', 'edit', 'collection', 'completed',
+            'fetch_order', 'new_customer', 'check_customer', 'items', 'storages', 'status']
+
 async def new_session():
     return aiohttp.ClientSession()
 
-session = asyncio.run(new_session())
+session = asyncio.get_event_loop().run_until_complete(new_session())
 
 async def new_order(**kwargs):
     """Creates a new order in the database"""
@@ -58,15 +61,13 @@ async def new_customer(data: dict):
 
 async def check_customer(discord_id: int):
     """Checks if a customer exists"""
-    print(session.closed)
     async with session.get(f'{URL}/customers/{discord_id}') as resp:
-        return resp
-        # html = await resp.text()
-        # try:
-        #     data = json.loads(html)
-        #     return data
-        # except Exception:
-        #     return False
+        html = await resp.text()
+        try:
+            data = json.loads(html)
+            return data
+        except Exception:
+            return False
 
 
 async def items():
