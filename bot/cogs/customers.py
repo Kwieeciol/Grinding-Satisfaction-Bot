@@ -9,8 +9,11 @@ class Customers(commands.Cog):
 
     @commands.command()
     async def new(self, ctx):
-        print(await database.check_customer(ctx.author.id))
-
+        exists = await database.check_customer(ctx.author.id)
+        if exists:
+            await ctx.send('You exist')
+        else:
+            await ctx.send('You dont exist')
 
 def setup(client):
     client.add_cog(Customers(client))
