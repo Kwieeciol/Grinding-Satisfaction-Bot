@@ -1,5 +1,6 @@
 import aiohttp
 import asyncio
+import json
 from .constants import URL
 
 async def new_session():
@@ -57,13 +58,15 @@ async def new_customer(data: dict):
 
 async def check_customer(discord_id: int):
     """Checks if a customer exists"""
+    print(session.closed)
     async with session.get(f'{URL}/customers/{discord_id}') as resp:
-        html = await resp.text()
-        try:
-            data = json.loads(html)
-            return data
-        except Exception:
-            return False
+        return resp
+        # html = await resp.text()
+        # try:
+        #     data = json.loads(html)
+        #     return data
+        # except Exception:
+        #     return False
 
 
 async def items():
