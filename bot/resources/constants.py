@@ -1,4 +1,4 @@
-__all__ = ['Categories', 'Channels', 'MODERATION_ROLES', 'STAFF_ROLES']
+__all__ = ['Categories', 'Channels', 'MODERATION_ROLES', 'STAFF_ROLES', 'URL']
 
 class Categories:
     pending_collection = 740923676115075132
@@ -15,3 +15,5 @@ class Roles:
 
 MODERATION_ROLES = Roles.management
 STAFF_ROLES = Roles.staff
+
+URL = 'http://grindingsatisfaction.herokuapp.com'
