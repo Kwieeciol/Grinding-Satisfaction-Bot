@@ -31,6 +31,23 @@ def _check_limit(embed):
         return False
 
 
+def _check_progress(embed):
+    fields = embed.to_dict()['fields']
+    progress = limit = 0
+
+    for field in fields:
+        name, value, _ = field.values()
+        if name == 'Amount':
+            limit = int(value)
+        elif name == 'Progress':
+            progress = int(value)
+
+    if progress <= limit:
+        return True
+    else:
+        return False
+
+
 class Staff(commands.Cog):
     def __init__(self, client):
         self.client = client
@@ -80,36 +97,32 @@ class Staff(commands.Cog):
         message = pins[0]
         embed = message.embeds[0]
 
-        if not _check_limit(embed):
-            id = return_int(embed.title)
+        id = return_int(embed.title)
 
-            customer_role = discord.utils.get(ctx.guild.roles, name=f'GS-{id}')
-            worker_role = discord.utils.get(ctx.guild.roles, name=f'GS-{id} worker')
-            management_role = discord.utils.get(ctx.guild.roles, id=MODERATION_ROLES)
-            # Getting the customer
-            customer = [member for member in ctx.guild.members for role in member.roles if role.name == f'GS-{id}'][0]
-            # Getting the new category
-            category = discord.utils.get(ctx.guild.categories, id=Categories.pending_collection)
-            # Deleting messages apart from pinned ones
-            await ctx.channel.purge(limit=100, check=check)
+        customer_role = discord.utils.get(ctx.guild.roles, name=f'GS-{id}')
+        worker_role = discord.utils.get(ctx.guild.roles, name=f'GS-{id} worker')
+        management_role = discord.utils.get(ctx.guild.roles, id=MODERATION_ROLES)
+        # Getting the customer
+        customer = [member for member in ctx.guild.members for role in member.roles if role.name == f'GS-{id}'][0]
+        # Getting the new category
+        category = discord.utils.get(ctx.guild.categories, id=Categories.pending_collection)
+        # Deleting messages apart from pinned ones
+        await ctx.channel.purge(limit=100, check=check)
 
-            overwrites = {
-                ctx.guild.default_role: PermissionOverwrite(read_messages=False),
-                customer_role: PermissionOverwrite(read_messages=True, send_messages=False),
-                worker_role: PermissionOverwrite(read_messages=True, send_messages=False),
-                management_role: PermissionOverwrite(read_messages=True, send_messages=True)
-            }
-            # Editing the category and overwrites
-            await ctx.channel.edit(category=category, overwrites=overwrites)
-            await message.clear_reactions()
-            await message.add_reaction('✅')
-            # Sending the final message
-            await ctx.send(f'Hi, {customer.mention}! Your order **GS-{id}** is ready to be collected! Please contact {ctx.author.mention} for collection timings')
-            # Changing the order to 'pending-collection' status in the database
-            # await database.collection(id)
-
-        else:
-            await ctx.send('Please finish the order.')
+        overwrites = {
+            ctx.guild.default_role: PermissionOverwrite(read_messages=False),
+            customer_role: PermissionOverwrite(read_messages=True, send_messages=False),
+            worker_role: PermissionOverwrite(read_messages=True, send_messages=False),
+            management_role: PermissionOverwrite(read_messages=True, send_messages=True)
+        }
+        # Editing the category and overwrites
+        await ctx.channel.edit(category=category, overwrites=overwrites)
+        await message.clear_reactions()
+        await message.add_reaction('✅')
+        # Sending the final message
+        await ctx.send(f'Hi, {customer.mention}! Your order **GS-{id}** is ready to be collected! Please contact {ctx.author.mention} for collection timings')
+        # Changing the order to 'pending-collection' status in the database
+        # await database.collection(id)
 
 
     async def finish_order(self, ctx):
@@ -128,6 +141,17 @@ class Staff(commands.Cog):
         await worker_role.delete()
         # Changing the order to 'completed' status in the database
         # await database.completed(id)
+
+
+    def edit_embed(self, embed, **options):
+        dct = embed.to_dict()
+        fields = dct['fields']
+        for field in fields:
+            name, value, _ = field.values()
+            if name.lower() in options:
+                field['value'] = options[name.lower()]
+
+        return discord.Embed.from_dict(dct)
 
 
     @commands.Cog.listener()
@@ -150,7 +174,11 @@ class Staff(commands.Cog):
                         # The reaction has been added in an order with 'in-progress' status
                         # Checking if the reacted message is an embed
                         if (embed := _is_embed(message)):
-                            await self.proceed(ctx)
+                            if _check_limit(embed):
+                                await self.proceed(ctx)
+
+                            else:
+                                await ctx.send('Please finish the order')
 
                         else:
                             if ctx.message.author == self.client.user and ctx.message.content == proceed_message:
@@ -160,7 +188,7 @@ class Staff(commands.Cog):
                         # The reaction has been added in an order with 'pending-collection' status
                         if (embed := _is_embed(message)):
                             await self.proceed(ctx)
-                        
+
                         else:
                             if ctx.message.author == self.client.user and ctx.message.content == proceed_message:
                                 await self.finish_order(ctx)
@@ -178,7 +206,19 @@ class Staff(commands.Cog):
                 # 3. Check if the progress is less than the amount ordered
                 # 4. Edit the embed with the new progress`
                 # 5. Edit the database
-                pass
+                pins = await ctx.channel.pins()
+                message = pins[0]
+                embed = message.embeds[0]
+                # Editing the embed
+                embed = self.edit_embed(embed, progress=amount)
+                if _check_progress(embed):
+                    await ctx.send(f'Changed progress of **{ctx.channel.name.upper()}** to **{amount}**')
+                    await message.edit(embed=embed)
+
+                else:
+                    await ctx.send('Progress cannot exceed the limit.')
+
+
 
 
 def setup(client):
