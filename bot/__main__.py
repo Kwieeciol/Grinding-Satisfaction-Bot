@@ -14,6 +14,7 @@ logger.addHandler(handler)
 
 intents = discord.Intents.default()
 intents.reactions = True
+intents.members = True
 
 client = commands.Bot(command_prefix='!', intents=intents)
 TOKEN = os.getenv('TOKEN')
@@ -60,7 +61,7 @@ async def reload(ctx, extension):
 
 
 for filename in os.listdir('./bot/cogs'):
-    if filename.endswith('.py') and filename != '__init__.py':
+    if filename.endswith('.py'):
         client.load_extension(f'cogs.{filename[:-3]}')
         print(f'{filename[:-3]} loaded')
 
