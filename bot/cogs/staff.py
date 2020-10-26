@@ -1,7 +1,7 @@
 import discord
 from discord import PermissionOverwrite
 from discord.ext import commands
-from resources.constants import Channels, Categories, MODERATION_ROLES
+from resources.constants import Channels, Categories, MODERATION_ROLES, STAFF_ROLES
 import resources.database as database
 from resources.functions import return_int
 
@@ -48,7 +48,6 @@ class Staff(commands.Cog):
             await database.assign_order(id, user.id)
 
 
-
     @commands.Cog.listener()
     async def on_raw_reaction_add(self, payload):
         channel = self.client.get_channel(payload.channel_id)
@@ -65,6 +64,20 @@ class Staff(commands.Cog):
                 elif channel.category.id == Categories.pending_collection:
                     # The reaction has been added in an order with 'pending-collection' status
                     pass
+
+
+    @commands.command(aliases=['p'])
+    @commands.has_role(STAFF_ROLES)
+    async def progress(self, ctx, amount: int):
+        if (category := ctx.channel.category) != None:
+            if category.id == Categories.in_progress:
+                # --to do--
+                # 1. Fetch the embed
+                # 2. Get the details of the order
+                # 3. Check if the progress is less than the amount ordered
+                # 4. Edit the embed with the new progress`
+                # 5. Edit the database
+                pass
 
 
 def setup(client):
