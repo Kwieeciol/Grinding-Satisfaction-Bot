@@ -37,7 +37,7 @@ async def ping(ctx):
 async def clear(ctx, amount: int):
     def check(m):
         return not m.pinned
-    await ctx.channel.purge(limit=amount+1)
+    await ctx.channel.purge(limit=amount+1, check=check)
 
 
 @client.command()
