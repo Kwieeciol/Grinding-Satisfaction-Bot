@@ -1,6 +1,6 @@
 import discord
 
-__all__ = ['Categories', 'Channels', 'MODERATION_ROLES', 'STAFF_ROLES', 'URL', 'COLOUR', 'proceed_message']
+__all__ = ['Categories', 'Channels', 'MODERATION_ROLES', 'STAFF_ROLES', 'URL', 'COLOUR', 'proceed_message', 'EMOJI_ID']
 
 class Categories:
     pending_collection = 740923676115075132
@@ -23,3 +23,4 @@ STAFF_ROLES = Roles.staff
 URL = 'http://grindingsatisfaction.herokuapp.com'
 
 COLOUR = discord.Colour.purple()
+EMOJI_ID = 745358651967012994

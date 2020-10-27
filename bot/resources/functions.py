@@ -30,7 +30,7 @@ def _is_order_embed(message):
         embed = message.embeds[0]
 
         title = embed.title
-        author = embed.author
+        author = embed.author.name
         fields = embed.fields
 
         if bool(re.search(title_pattern, title)):

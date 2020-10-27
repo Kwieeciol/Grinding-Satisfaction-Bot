@@ -1,7 +1,7 @@
 import discord
 from discord import PermissionOverwrite
 from discord.ext import commands
-from resources.constants import Channels, Categories, MODERATION_ROLES, STAFF_ROLES, COLOUR, proceed_message
+from resources.constants import Channels, Categories, MODERATION_ROLES, STAFF_ROLES, COLOUR, proceed_message, EMOJI_ID
 import resources.database as database
 from resources.functions import return_int, edit_embed, _is_order_embed, _is_proceed_embed
 
@@ -10,7 +10,7 @@ def _is_embed(message):
     try:
         return message.embeds[0]
     except Exception:
-        return False
+        return False # NOT IN USE
 
 
 def _check_limit(embed):
@@ -50,11 +50,11 @@ def _check_progress(embed):
 class Staff(commands.Cog):
     def __init__(self, client):
         self.client = client
-        self.emoji = None
+        self.emoji = self.client.get_emoji(EMOJI_ID)
 
 
     async def proceed(self, ctx):
-        message = await ctx.send(embed=discord.Embed(description=proceed_message, colour=COLOUR)))
+        message = await ctx.send(embed=discord.Embed(description=proceed_message, colour=COLOUR))
         await message.add_reaction('✅')
         await message.add_reaction('❌')
 
@@ -88,6 +88,7 @@ class Staff(commands.Cog):
             await ctx.message.delete()
             # Assigning the order to the worker in the database
             # await database.assign_order(id, ctx.author.id)
+
 
 
     async def change_status(self, ctx):
@@ -182,7 +183,6 @@ class Staff(commands.Cog):
                             await self.finish_order(ctx)
 
 
-
     @commands.command(aliases=['p'])
     @commands.has_role(STAFF_ROLES)
     async def progress(self, ctx, amount: int):
@@ -204,7 +204,9 @@ class Staff(commands.Cog):
                     await ctx.send('Progress cannot exceed the limit.')
 
 
-
+    @commands.command()
+    async def proceed(self, ctx):
+        await self.proceed(ctx)
 
 def setup(client):
     client.add_cog(Staff(client))
