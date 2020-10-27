@@ -1,7 +1,7 @@
 import discord
 from discord import PermissionOverwrite
 from discord.ext import commands
-from resources.constants import Channels, Categories, MODERATION_ROLES, STAFF_ROLES
+from resources.constants import Channels, Categories, MODERATION_ROLES, STAFF_ROLES, COLOUR
 import resources.database as database
 from resources.functions import return_int, _is_order_embed
 
@@ -51,9 +51,11 @@ def _check_progress(embed):
 class Staff(commands.Cog):
     def __init__(self, client):
         self.client = client
+        self.emoji = None
+
 
     async def proceed(self, ctx):
-        message = await ctx.send(proceed_message)
+        message = await ctx.send(embed=discord.Embed(description=proceed_message, colour=COLOUR)))
         await message.add_reaction('✅')
         await message.add_reaction('❌')
 
@@ -178,7 +180,7 @@ class Staff(commands.Cog):
                                 await self.proceed(ctx)
 
                             else:
-                                await ctx.send('Please finish the order')
+                                await ctx.send(embed=discord.Embed(description='Please, finish the order before you change the status.', colour=COLOUR))
 
                         else:
                             if ctx.message.author == self.client.user and ctx.message.content == proceed_message:

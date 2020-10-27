@@ -1,4 +1,6 @@
-__all__ = ['Categories', 'Channels', 'MODERATION_ROLES', 'STAFF_ROLES', 'URL']
+import discord
+
+__all__ = ['Categories', 'Channels', 'MODERATION_ROLES', 'STAFF_ROLES', 'URL', 'COLOUR']
 
 class Categories:
     pending_collection = 740923676115075132
@@ -17,3 +19,5 @@ MODERATION_ROLES = Roles.management
 STAFF_ROLES = Roles.staff
 
 URL = 'http://grindingsatisfaction.herokuapp.com'
+
+COLOUR = discord.Colour.purple()

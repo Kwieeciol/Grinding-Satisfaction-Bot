@@ -2,6 +2,7 @@ import datetime
 import discord
 from discord.ext import commands
 import resources.constants as constants
+from resources.constants import COLOUR
 import resources.database as database
 import resources.embeds as embeds
 
@@ -22,7 +23,7 @@ class Customers(commands.Cog):
     @commands.command()
     async def order(self, ctx):
         channel = self.client.get_channel(constants.Channels.queued)
-        embed = discord.Embed(title='*GS-1*', colour=discord.Colour.purple())
+        embed = discord.Embed(title='*GS-1*', colour=COLOUR)
         embed.set_author(name=ctx.author, icon_url=ctx.author.avatar_url)
         embed.add_field(name='Cargo', value='Sand', inline=True)
         embed.add_field(name='Amount', value='10000', inline=True)
