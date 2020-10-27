@@ -50,11 +50,11 @@ def _check_progress(embed):
 class Staff(commands.Cog):
     def __init__(self, client):
         self.client = client
-        self.emoji = self.client.get_emoji(EMOJI_ID)
 
 
     async def proceed(self, ctx):
-        message = await ctx.send(embed=discord.Embed(description=proceed_message, colour=COLOUR))
+        emote = discord.utils.get(ctx.guild.emojis, id=EMOJI_ID)
+        message = await ctx.send(embed=discord.Embed(description=f'{emote} {proceed_message}', colour=COLOUR))
         await message.add_reaction('✅')
         await message.add_reaction('❌')
 
@@ -88,7 +88,6 @@ class Staff(commands.Cog):
             await ctx.message.delete()
             # Assigning the order to the worker in the database
             # await database.assign_order(id, ctx.author.id)
-
 
 
     async def change_status(self, ctx):
@@ -164,15 +163,16 @@ class Staff(commands.Cog):
                     if channel.category.id == Categories.in_progress:
                         # The reaction has been added in an order with 'in-progress' status
                         # Checking if the reacted message is an order or proceed embed
-                        if _is_order_embed(message):
+                        if (embed := _is_order_embed(message)):
                             if _check_limit(embed):
                                 await self.proceed(ctx)
 
                             else:
-                                await ctx.send(embed=discord.Embed(description='Please, finish the order before you change the status.', colour=COLOUR))
+                                emote = discord.utils.get(ctx.guild.emojis, id=EMOJI_ID)
+                                await ctx.send(embed=discord.Embed(description=f'{emote} Please, finish the order before you change the status.', colour=COLOUR))
 
-                        elif _is_proceed_embed(message):
-                            await self.change_status(ctx)
+                        # elif _is_proceed_embed(message):
+                        #     await self.change_status(ctx)
 
                     elif channel.category.id == Categories.pending_collection:
                         # The reaction has been added in an order with 'pending-collection' status
@@ -195,18 +195,15 @@ class Staff(commands.Cog):
                 # Editing the embed
                 embed = edit_embed(embed, progress=amount)
                 if _check_progress(embed):
+                    emote = discord.utils.get(ctx.guild.emojis, id=EMOJI_ID)
                     id = return_int(ctx.channel.name)
-                    await ctx.send(embed=discord.Embed(description=f'Changed progress of **GS-{id}** to **{amount}**', colour=COLOUR))
+                    await ctx.send(embed=discord.Embed(description=f'{emote} Changed progress of **GS-{id}** to **{amount}**', colour=COLOUR))
                     await message.edit(embed=embed)
-                    await database.set_progress(id, amount)
+                    # await database.set_progress(id, amount)
 
                 else:
                     await ctx.send('Progress cannot exceed the limit.')
 
-
-    @commands.command()
-    async def proceed(self, ctx):
-        await self.proceed(ctx)
 
 def setup(client):
     client.add_cog(Staff(client))
