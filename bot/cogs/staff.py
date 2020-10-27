@@ -59,6 +59,17 @@ class Staff(commands.Cog):
         await message.add_reaction('❌')
 
 
+    async def cancel_proceed(self, ctx):
+        # Deleting the 'proceed' message
+        await ctx.message.delete()
+        # Getting the pinned message
+        pins = await ctx.channel.pins()
+        message = pins[0]
+
+        await message.clear_reactions()
+        await message.add_reaction('✅')
+
+
     async def take_order(self, ctx):
         if (embed := _is_order_embed(ctx.message)):
             id = return_int(embed.title)
@@ -144,6 +155,17 @@ class Staff(commands.Cog):
         # await database.completed(id)
 
 
+    async def _finish_order(self, ctx):
+        emote = discord.utils.get(ctx.guild.emojis, id=EMOJI_ID)
+        await ctx.send(embed=discord.Embed(description=f'{emote} Please, finish the order before you change the status.', colour=COLOUR))
+
+        pins = await ctx.channel.pins()
+        message = pins[0]
+
+        await message.clear_reactions()
+        await message.add_reaction('✅')
+
+
     @commands.Cog.listener()
     async def on_raw_reaction_add(self, payload):
         if payload.user_id != self.client.user.id:
@@ -168,8 +190,7 @@ class Staff(commands.Cog):
                                 await self.proceed(ctx)
 
                             else:
-                                emote = discord.utils.get(ctx.guild.emojis, id=EMOJI_ID)
-                                await ctx.send(embed=discord.Embed(description=f'{emote} Please, finish the order before you change the status.', colour=COLOUR))
+                                await self._finish_order(ctx)
 
                         elif _is_proceed_embed(message):
                             await self.change_status(ctx)
@@ -186,8 +207,12 @@ class Staff(commands.Cog):
                 channel = self.client.get_channel(payload.channel_id)
                 message = await channel.fetch_message(payload.message_id)
 
-                if _is_proceed_embed(message):
-                    await message.delete()
+                ctx = await self.client.get_context(message)
+
+                if (category := channel.category) != None:
+                    if category.id == Categories.in_progress or category.id == Categories.pending_collection:
+                        if _is_proceed_embed(message):
+                            await self.cancel_proceed(ctx)
 
 
 
