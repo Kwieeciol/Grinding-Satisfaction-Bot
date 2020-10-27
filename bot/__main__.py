@@ -16,6 +16,7 @@ intents = discord.Intents.default()
 intents.reactions = True
 intents.members = True
 intents.messages = True
+intents.emojis = True
 
 client = commands.Bot(command_prefix='!', intents=intents)
 TOKEN = os.getenv('TOKEN')
