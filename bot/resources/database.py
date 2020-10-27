@@ -47,7 +47,7 @@ async def completed(order: int):
         return await resp.json()
 
 
-async def fetch_order(order: int): # NOT IN USE
+async def fetch_order(order: int):
     """Returns an order data"""
     async with session.get(f'{URL}/orders/{order}') as resp:
         return await resp.json()

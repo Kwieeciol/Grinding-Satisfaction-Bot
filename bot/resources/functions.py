@@ -1,7 +1,9 @@
 import re
+import asyncio
 import discord
 import datetime
 from .constants import proceed_message
+from .database import fetch_order
 
 __all__ = ['date', 'return_int', 'edit_embed', 'edit_progress', '_is_order_embed', '_is_proceed_embed', 'total_price']
 
@@ -13,9 +15,18 @@ def return_int(s: str):
     return int(''.join([l for l in s if l.isdigit()]))
 
 
+def total_price(id: int):
+    # details = asyncio.get_event_loop().run_until_complete(fetch_order(id))
+    pass
+
+
 def edit_embed(embed, options):
     dct = embed.to_dict()
     fields = dct['fields']
+
+    id = return_int(embed.title)
+    new_price = total_price()
+
     for field in fields:
         name, value, _ = field.values()
         if name.lower() in options:
@@ -71,18 +82,3 @@ def _is_proceed_embed(message):
 
     except Exception:
         return False
-
-
-def total_price(amount: int, price_each: int, storage_fee: int, discount: int=0, priority: bool=False):
-    item_price = amount * price_each
-    total_storage_fee = amount * storage_fee
-
-    total_price = item_price + total_storage_fee
-
-    if discount:
-        total_price = round(total_price * (1 - (discount / 100)))
-
-    if priority:
-        total_price = round(total_price * 1.25)
-
-    return total_price

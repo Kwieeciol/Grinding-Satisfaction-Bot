@@ -6,13 +6,6 @@ import resources.database as database
 from resources.functions import return_int, edit_progress, _is_order_embed, _is_proceed_embed
 
 
-def _is_embed(message):
-    try:
-        return message.embeds[0]
-    except Exception:
-        return False # NOT IN USE
-
-
 def _check_limit(embed):
     fields = embed.to_dict()['fields']
     progress = limit = 0
@@ -73,6 +66,7 @@ class Staff(commands.Cog):
     async def take_order(self, ctx):
         if (embed := _is_order_embed(ctx.message)):
             id = return_int(embed.title)
+            print(embed.to_dict())
             # Getting the roles
             customer_role = discord.utils.get(ctx.guild.roles, name=f'GS-{id}')
             worker_role = discord.utils.get(ctx.guild.roles, name=f'GS-{id} worker')
