@@ -3,7 +3,7 @@ from discord import PermissionOverwrite
 from discord.ext import commands
 from resources.constants import Channels, Categories, MODERATION_ROLES, STAFF_ROLES, COLOUR, proceed_message, EMOJI_ID
 import resources.database as database
-from resources.functions import return_int, edit_embed, _is_order_embed, _is_proceed_embed
+from resources.functions import return_int, edit_progress, _is_order_embed, _is_proceed_embed
 
 
 def _is_embed(message):
@@ -226,7 +226,7 @@ class Staff(commands.Cog):
                 message = pins[0]
                 embed = message.embeds[0]
                 # Editing the embed
-                embed = edit_embed(embed, progress=amount)
+                embed = edit_progress(embed, amount)
                 if _check_progress(embed):
                     emote = discord.utils.get(ctx.guild.emojis, id=EMOJI_ID)
                     id = return_int(ctx.channel.name)
