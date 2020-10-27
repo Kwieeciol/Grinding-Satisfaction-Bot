@@ -1,11 +1,10 @@
 import discord
 from discord import PermissionOverwrite
 from discord.ext import commands
-from resources.constants import Channels, Categories, MODERATION_ROLES, STAFF_ROLES, COLOUR
+from resources.constants import Channels, Categories, MODERATION_ROLES, STAFF_ROLES, COLOUR, proceed_message
 import resources.database as database
-from resources.functions import return_int, _is_order_embed
+from resources.functions import return_int, edit_embed, _is_order_embed, _is_proceed_embed
 
-proceed_message = 'Are you sure you want to proceed?'
 
 def _is_embed(message):
     try:
@@ -145,17 +144,6 @@ class Staff(commands.Cog):
         # await database.completed(id)
 
 
-    def edit_embed(self, embed, **options):
-        dct = embed.to_dict()
-        fields = dct['fields']
-        for field in fields:
-            name, value, _ = field.values()
-            if name.lower() in options:
-                field['value'] = options[name.lower()]
-
-        return discord.Embed.from_dict(dct)
-
-
     @commands.Cog.listener()
     async def on_raw_reaction_add(self, payload):
         if payload.user_id != self.client.user.id:
@@ -174,26 +162,24 @@ class Staff(commands.Cog):
                 elif channel.category != None:
                     if channel.category.id == Categories.in_progress:
                         # The reaction has been added in an order with 'in-progress' status
-                        # Checking if the reacted message is an embed
-                        if (embed := _is_order_embed(message)):
+                        # Checking if the reacted message is an order or proceed embed
+                        if _is_order_embed(message):
                             if _check_limit(embed):
                                 await self.proceed(ctx)
 
                             else:
                                 await ctx.send(embed=discord.Embed(description='Please, finish the order before you change the status.', colour=COLOUR))
 
-                        else:
-                            if ctx.message.author == self.client.user and ctx.message.content == proceed_message:
-                                await self.change_status(ctx)
+                        elif _is_proceed_embed(message):
+                            await self.change_status(ctx)
 
                     elif channel.category.id == Categories.pending_collection:
                         # The reaction has been added in an order with 'pending-collection' status
-                        if (embed := _is_order_embed(message)):
+                        if _is_order_embed(message):
                             await self.proceed(ctx)
 
-                        else:
-                            if ctx.message.author == self.client.user and ctx.message.content == proceed_message:
-                                await self.finish_order(ctx)
+                        elif _is_proceed_embed(message):
+                            await self.finish_order(ctx)
 
 
 
@@ -202,20 +188,17 @@ class Staff(commands.Cog):
     async def progress(self, ctx, amount: int):
         if (category := ctx.channel.category) != None:
             if category.id == Categories.in_progress:
-                # --to do--
-                # 1. Fetch the embed
-                # 2. Get the details of the order
-                # 3. Check if the progress is less than the amount ordered
-                # 4. Edit the embed with the new progress`
-                # 5. Edit the database
+                # Getting the message
                 pins = await ctx.channel.pins()
                 message = pins[0]
                 embed = message.embeds[0]
                 # Editing the embed
-                embed = self.edit_embed(embed, progress=amount)
+                embed = edit_embed(embed, progress=amount)
                 if _check_progress(embed):
-                    await ctx.send(f'Changed progress of **{ctx.channel.name.upper()}** to **{amount}**')
+                    id = return_int(ctx.channel.name)
+                    await ctx.send(embed=discord.Embed(description=f'Changed progress of **GS-{id}** to **{amount}**', colour=COLOUR))
                     await message.edit(embed=embed)
+                    await database.set_progress(id, amount)
 
                 else:
                     await ctx.send('Progress cannot exceed the limit.')

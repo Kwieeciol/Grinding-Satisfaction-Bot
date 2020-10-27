@@ -1,6 +1,6 @@
 import discord
 
-__all__ = ['Categories', 'Channels', 'MODERATION_ROLES', 'STAFF_ROLES', 'URL', 'COLOUR']
+__all__ = ['Categories', 'Channels', 'MODERATION_ROLES', 'STAFF_ROLES', 'URL', 'COLOUR', 'proceed_message']
 
 class Categories:
     pending_collection = 740923676115075132
@@ -14,6 +14,8 @@ class Roles:
     management = 741244092067086356
     staff = 713354499254648882
     customer = 769869836175933472
+
+proceed_message = 'Are you sure you want to proceed?'
 
 MODERATION_ROLES = Roles.management
 STAFF_ROLES = Roles.staff
