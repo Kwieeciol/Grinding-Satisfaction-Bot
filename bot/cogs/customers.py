@@ -6,19 +6,25 @@ from resources.constants import COLOUR
 import resources.database as database
 import resources.embeds as embeds
 
-def check_limit(amount, limit):
+
+def _check_limit(amount, limit):
     if amount.isdigit():
         if int(amount) <= limit:
             return True
-        else:
-            return False
-    else:
-        return False
+    return False
+
+
+def _storage_check(storage, storages):
+    if storage.content.isdigit():
+        if int(storage) in len(storages):
+            return True
+    return False
 
 
 class Customers(commands.Cog):
     def __init__(self, client):
         self.client = client
+
 
     @commands.command()
     async def order(self, ctx):
@@ -76,13 +82,19 @@ class Customers(commands.Cog):
         await ctx.author.send(embed=embeds.order_embed_2(ctx, item.content, limit))
         amount = await self.client.wait_for('message', check=check)
         # Checking if the amount is valid
-        while not check_limit(amount.content, limit):
+        while not _check_limit(amount.content, limit):
             await ctx.author.send(embed=embeds.not_valid_answer)
             amount = await self.client.wait_for('message', check=check)
 
         # Fetching the available storages
         storages = await database.storages()
         await ctx.author.send(embed=embeds.order_embed_3(ctx, storages))
+        storage = await self.client.wait_for('message', check=check)
+
+        while not _storage_check(storage, storages):
+            await ctx.author.send(embed=embeds.not_valid_answer)
+            storage = await self.client.wait_for('message', check=check)
+
 
 
 def setup(client):
