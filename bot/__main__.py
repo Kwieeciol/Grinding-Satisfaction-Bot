@@ -18,7 +18,7 @@ intents.members = True
 intents.messages = True
 intents.emojis = True
 
-client = commands.Bot(command_prefix='!', intents=intents)
+client = commands.Bot(command_prefix='!', intents=intents, case_insensitive=True)
 TOKEN = os.getenv('TOKEN')
 
 
