@@ -59,7 +59,7 @@ class Staff(commands.Cog):
 
 
     async def take_order(self, ctx):
-        if (embed := _is_embed(ctx.message)):
+        if (embed := _is_order_embed(ctx.message)):
             id = return_int(embed.title)
             # Getting the roles
             customer_role = discord.utils.get(ctx.guild.roles, name=f'GS-{id}')
@@ -173,7 +173,7 @@ class Staff(commands.Cog):
                     if channel.category.id == Categories.in_progress:
                         # The reaction has been added in an order with 'in-progress' status
                         # Checking if the reacted message is an embed
-                        if (embed := _is_embed(message)):
+                        if (embed := _is_order_embed(message)):
                             if _check_limit(embed):
                                 await self.proceed(ctx)
 
@@ -186,7 +186,7 @@ class Staff(commands.Cog):
 
                     elif channel.category.id == Categories.pending_collection:
                         # The reaction has been added in an order with 'pending-collection' status
-                        if (embed := _is_embed(message)):
+                        if (embed := _is_order_embed(message)):
                             await self.proceed(ctx)
 
                         else:
