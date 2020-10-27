@@ -1,4 +1,3 @@
-from typing import Optional
 import discord
 from discord.ext import commands
 import resources.database as database
@@ -39,14 +38,15 @@ class Management(commands.Cog):
 						# Getting the message and editing it with the new embed
 						pins = await ctx.channel.pins()
 						message = pins[0]
-						embed = message.embeds[0]
-
-						new_embed = edit_embed(embed, options)
-
-						await message.edit(embed=new_embed)
+						embed = message.embeds[0]						await ctx.send(embed=discord.Embed(description=f'{emote} Please wait... Editing the order.', colour=COLOUR))
+						
+						id = return_int(embed.title)
 						# Editing the database
-						id = return_int(new_embed.title)
 						# await database.edit(id, data=options)
+
+						# new_embed = edit_embed(embed, options)
+
+						# await message.edit(embed=new_embed)
 					else:
 						await ctx.send(embed=discord.Embed(description=f'{emote} Please use only digits.', colour=COLOUR))
 				else:
