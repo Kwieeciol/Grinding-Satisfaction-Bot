@@ -1,6 +1,7 @@
 import re
 import discord
 import datetime
+from .constants import proceed_message
 
 __all__ = ['date', 'return_int', 'edit_embed', '_is_order_embed', '_is_proceed_embed']
 
@@ -48,6 +49,16 @@ def _is_order_embed(message):
         return False
 
 
+description_pattern = f'<:gs:\d+> {proceed_message}'
+
 def _is_proceed_embed(message):
-    # Finish the function, find a pattern
-    pass
+    try:
+        embed = message.embeds[0]
+
+        description = embed.description
+
+        if bool(re.search(description_pattern, description)):
+            return embed
+
+    except Exception:
+        return False

@@ -171,8 +171,8 @@ class Staff(commands.Cog):
                                 emote = discord.utils.get(ctx.guild.emojis, id=EMOJI_ID)
                                 await ctx.send(embed=discord.Embed(description=f'{emote} Please, finish the order before you change the status.', colour=COLOUR))
 
-                        # elif _is_proceed_embed(message):
-                        #     await self.change_status(ctx)
+                        elif _is_proceed_embed(message):
+                            await self.change_status(ctx)
 
                     elif channel.category.id == Categories.pending_collection:
                         # The reaction has been added in an order with 'pending-collection' status
@@ -181,6 +181,14 @@ class Staff(commands.Cog):
 
                         elif _is_proceed_embed(message):
                             await self.finish_order(ctx)
+
+            elif payload.emoji.name == '❌':
+                channel = self.client.get_channel(payload.channel_id)
+                message = await channel.fetch_message(payload.message_id)
+
+                if _is_proceed_embed(message):
+                    await message.delete()
+
 
 
     @commands.command(aliases=['p'])
