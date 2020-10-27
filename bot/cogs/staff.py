@@ -3,7 +3,7 @@ from discord import PermissionOverwrite
 from discord.ext import commands
 from resources.constants import Channels, Categories, MODERATION_ROLES, STAFF_ROLES
 import resources.database as database
-from resources.functions import return_int
+from resources.functions import return_int, _is_order_embed
 
 proceed_message = 'Are you sure you want to proceed?'
 
