@@ -38,7 +38,8 @@ class Management(commands.Cog):
 						# Getting the message and editing it with the new embed
 						pins = await ctx.channel.pins()
 						message = pins[0]
-						embed = message.embeds[0]						await ctx.send(embed=discord.Embed(description=f'{emote} Please wait... Editing the order.', colour=COLOUR))
+						embed = message.embeds[0]
+						await ctx.send(embed=discord.Embed(description=f'{emote} Please wait... Editing the order.', colour=COLOUR))
 						
 						id = return_int(embed.title)
 						# Editing the database
