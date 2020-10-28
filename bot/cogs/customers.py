@@ -68,7 +68,7 @@ class Customers(commands.Cog):
 
             await database.new_customer(customer_data)
         # Fetching the items from the database
-        items = await database.items()
+        items = await database.fetch_items()
 
         await ctx.author.send(embed=embeds.order_embed_1(ctx, items))
         item = await self.client.wait_for('message', check=check)
@@ -87,7 +87,7 @@ class Customers(commands.Cog):
             amount = await self.client.wait_for('message', check=check)
 
         # Fetching the available storages
-        storages = await database.storages()
+        storages = await database.fetch_storages()
         await ctx.author.send(embed=embeds.order_embed_3(ctx, storages))
         storage = await self.client.wait_for('message', check=check)
 

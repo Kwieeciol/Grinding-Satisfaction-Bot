@@ -46,6 +46,7 @@ async def completed(order: int):
     async with session.patch(f'{URL}/orders/{order}/complete') as resp:
         return await resp.json()
 
+
 async def cancel(order: int):
     """Cancels an order"""
     async with session.patch(f'{URL}/orders/{order}/cancel') as resp:
@@ -75,7 +76,7 @@ async def check_customer(discord_id: int):
             return False
 
 
-async def items():
+async def fetch_items():
     """Returns all the items available"""
     async with session.get(f'{URL}/prices') as resp:
         html = await resp.json()
@@ -83,7 +84,7 @@ async def items():
         return items
 
 
-async def storages():
+async def fetch_storages():
     """Returns all the storages available"""
     async with session.get(f'{URL}.storages') as resp:
         html = await resp.json()
