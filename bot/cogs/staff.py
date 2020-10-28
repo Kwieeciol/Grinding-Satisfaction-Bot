@@ -218,6 +218,17 @@ class Staff(commands.Cog):
 
                 else:
                     await ctx.send('Progress cannot exceed the limit.')
+    
+    
+    @commands.command()
+    @commands.has_role(STAFF_ROLES)
+    async def status(self, ctx):
+        emote = discord.utils.get(ctx.guild.emojis, id=EMOJI_ID)
+        current_status = await database.status(ctx.author.id)
+        if current_status:
+            await ctx.send(embed=discord.Embed(description=f'{emote} You set yourself to **active**', colour=COLOUR))
+        else:
+            await ctx.send(embed=discord.Embed(description=f'{emote} You set yourself to **inactive**', colour=COLOUR))
 
 
 def setup(client):

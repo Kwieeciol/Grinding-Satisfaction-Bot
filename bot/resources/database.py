@@ -92,7 +92,7 @@ async def fetch_storages():
         return storages
 
 
-async def status(discord_id):
+async def status(discord_id: int):
     """Changes the status of the worker"""
     async with session.patch(f'{URL}/employees/{discord_id}/status') as resp:
         return await resp.json()['active']
