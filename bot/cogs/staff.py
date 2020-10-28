@@ -6,7 +6,7 @@ import resources.database as database
 from resources.functions import return_int, edit_progress, _is_order_embed, _is_proceed_embed
 
 
-def _check_limit(embed):
+def _check_order(option, embed):
     fields = embed.to_dict()['fields']
     progress = limit = 0
 
@@ -17,26 +17,14 @@ def _check_limit(embed):
         elif name == 'Progress':
             progress = int(value)
 
-    if progress == limit:
-        return True
-    else:
+    if option == 'progress':
+        if progress <= limit:
+            return True
         return False
-
-
-def _check_progress(embed):
-    fields = embed.to_dict()['fields']
-    progress = limit = 0
-
-    for field in fields:
-        name, value, _ = field.values()
-        if name == 'Amount':
-            limit = int(value)
-        elif name == 'Progress':
-            progress = int(value)
-
-    if progress <= limit:
-        return True
-    else:
+    
+    elif option == 'limit':
+        if progress == limit:
+            return True
         return False
 
 
@@ -180,7 +168,7 @@ class Staff(commands.Cog):
                         # The reaction has been added in an order with 'in-progress' status
                         # Checking if the reacted message is an order or proceed embed
                         if (embed := _is_order_embed(message)):
-                            if _check_limit(embed):
+                            if _check_order('limit', embed):
                                 await self.proceed(ctx)
 
                             else:
@@ -221,7 +209,7 @@ class Staff(commands.Cog):
                 embed = message.embeds[0]
                 # Editing the embed
                 embed = edit_progress(embed, amount)
-                if _check_progress(embed):
+                if _check_order('progress', embed):
                     emote = discord.utils.get(ctx.guild.emojis, id=EMOJI_ID)
                     id = return_int(ctx.channel.name)
                     await ctx.send(embed=discord.Embed(description=f'{emote} Changed progress of **GS-{id}** to **{amount}**', colour=COLOUR))
