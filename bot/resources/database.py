@@ -43,7 +43,12 @@ async def collection(order: int):
 
 async def completed(order: int):
     """Changes the status of the order to completed"""
-    async with session.patch(f'{URL}/order/{order}/complete') as resp:
+    async with session.patch(f'{URL}/orders/{order}/complete') as resp:
+        return await resp.json()
+
+async def cancel(order: int):
+    """Cancels an order"""
+    async with session.patch(f'{URL}/orders/{order}/cancel') as resp:
         return await resp.json()
 
 

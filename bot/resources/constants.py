@@ -7,6 +7,7 @@ class Categories:
     in_progress = 740923709568843848
 
 class Channels:
+    lounge = 770992341586280518
     queued = 740951313482907748
     bot_commands = 745939379683590168
 
