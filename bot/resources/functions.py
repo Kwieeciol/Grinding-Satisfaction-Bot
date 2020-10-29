@@ -12,15 +12,40 @@ def date():
 
 
 def return_int(s: str):
+    """Returns all the digits in a string joined
+
+    Args:
+        s (str): The string in with to search the digits
+
+    Returns:
+        [int]: Digits
+    """
     return int(''.join([l for l in s if l.isdigit()]))
 
 
 def total_price(id: int):
+    """Calculates the total price for the order
+
+    Args:
+        id (int): The order ID
+    
+    Returns:
+        [str]: Total price separated by commas
+    """
     # details = asyncio.get_event_loop().run_until_complete(fetch_order(id))
     pass
 
 
-def edit_embed(embed, options):
+def edit_embed(embed: discord.Embed, options: dict):
+    """Edits an embed with the specified options
+
+    Args:
+        embed (discord.embeds.Embed): The order embed to edit
+        options (dict): The parameters to change
+
+    Returns:
+        [discord.Embed]: An embed with the new parameters changed
+    """
     dct = embed.to_dict()
     fields = dct['fields']
 
@@ -35,7 +60,16 @@ def edit_embed(embed, options):
     return discord.Embed.from_dict(dct)
 
 
-def edit_progress(embed, progress):
+def edit_progress(embed: discord.Embed, progress: int):
+    """Edits an embed progress
+
+    Args:
+        embed (discord.embeds.Embed): The order embed to edit
+        progress (int): The progress to change
+
+    Returns:
+        [discord.Embed]: An embed with the new progress changed
+    """
     dct = embed.to_dict()
     fields = dct['fields']
     for field in fields:
@@ -49,7 +83,15 @@ def edit_progress(embed, progress):
 title_pattern = '\*GS-\d+\*'
 author_pattern = '\w+#\d{4}'
 
-def _is_order_embed(message):
+def _is_order_embed(message: discord.Message):
+    """Return True of the message contains an order embed
+
+    Args:
+        message (discord.Message): The message in which to check
+
+    Returns:
+        [discord.Embed/bool]: Order embed/False
+    """
     try:
         embed = message.embeds[0]
 
@@ -73,7 +115,15 @@ def _is_order_embed(message):
 
 description_pattern = f'<:gs:\d+> {proceed_message}'
 
-def _is_proceed_embed(message):
+def _is_proceed_embed(message: discord.Message):
+    """Checks if the message is a proceed embed
+
+    Args:
+        message (discord.Message): The message in which yo check
+
+    Returns:
+        [discord.Embed/bool]: The proceed embed or False
+    """
     try:
         embed = message.embeds[0]
 
