@@ -54,7 +54,6 @@ class Staff(commands.Cog):
     async def take_order(self, ctx):
         if (embed := _is_order_embed(ctx.message)):
             id = return_int(embed.title)
-            print(embed.to_dict())
             # Getting the roles
             customer_role = discord.utils.get(ctx.guild.roles, name=f'GS-{id}')
             worker_role = discord.utils.get(ctx.guild.roles, name=f'GS-{id} worker')
@@ -199,7 +198,7 @@ class Staff(commands.Cog):
 
 
     @commands.command(aliases=['p'])
-    @commands.has_role(STAFF_ROLES)
+    @commands.has_any_role(*STAFF_ROLES)
     async def progress(self, ctx, amount: int):
         if (category := ctx.channel.category) != None:
             if category.id == Categories.in_progress:
@@ -207,21 +206,22 @@ class Staff(commands.Cog):
                 pins = await ctx.channel.pins()
                 message = pins[0]
                 embed = message.embeds[0]
+
+                emote = discord.utils.get(ctx.guild.emojis, id=EMOJI_ID)
                 # Editing the embed
                 embed = edit_progress(embed, amount)
                 if _check_order('progress', embed):
-                    emote = discord.utils.get(ctx.guild.emojis, id=EMOJI_ID)
                     id = return_int(ctx.channel.name)
                     await ctx.send(embed=discord.Embed(description=f'{emote} Changed progress of **GS-{id}** to **{amount}**', colour=COLOUR))
                     await message.edit(embed=embed)
                     # await database.set_progress(id, amount)
 
                 else:
-                    await ctx.send('Progress cannot exceed the limit.')
+                    await ctx.send(embed=discord.Embed(description=f'{emote} Progress cannot exceed the limit.', colour=COLOUR))
     
     
     @commands.command()
-    @commands.has_role(STAFF_ROLES)
+    @commands.has_any_role(*STAFF_ROLES)
     async def status(self, ctx):
         emote = discord.utils.get(ctx.guild.emojis, id=EMOJI_ID)
         current_status = await database.status(ctx.author.id)

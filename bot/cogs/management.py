@@ -26,7 +26,7 @@ class Management(commands.Cog):
 
 
     @commands.command()
-    @commands.has_role(MODERATION_ROLES)
+    @commands.has_any_role(*MODERATION_ROLES)
     async def edit(self, ctx, *args):
         emote = discord.utils.get(ctx.guild.emojis, id=EMOJI_ID)
         if (category := ctx.channel.category):
@@ -58,7 +58,7 @@ class Management(commands.Cog):
 
 
     @commands.command()
-    @commands.has_role(MODERATION_ROLES)
+    @commands.has_any_role(*MODERATION_ROLES)
     async def cancel(self, ctx):
         def check(emoji, author):
             return str(emoji) == '✅' and author == ctx.author

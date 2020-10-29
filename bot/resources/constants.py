@@ -13,12 +13,13 @@ class Channels:
 
 class Roles:
     management = 741244092067086356
+    hr_manager = 746283922698272830
     staff = 713354499254648882
     customer = 769869836175933472
 
 proceed_message = 'Are you sure you want to proceed?'
 
-MODERATION_ROLES = Roles.management
+MODERATION_ROLES = Roles.management, Roles.hr_manager
 STAFF_ROLES = Roles.staff
 
 URL = 'http://grindingsatisfaction.herokuapp.com'
