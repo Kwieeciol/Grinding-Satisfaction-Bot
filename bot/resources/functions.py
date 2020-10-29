@@ -42,6 +42,8 @@ def edit_progress(embed, progress):
         name, value, _ = field.values()
         if name.lower() == 'progress':
             field['value'] = str(progress)
+    
+    return discord.Embed.from_dict(dct)
 
 
 title_pattern = '\*GS-\d+\*'
