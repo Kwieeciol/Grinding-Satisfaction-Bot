@@ -198,7 +198,7 @@ class Staff(commands.Cog):
 
 
     @commands.command(aliases=['p'])
-    @commands.has_any_role(*STAFF_ROLES)
+    @commands.has_role(STAFF_ROLES)
     async def progress(self, ctx, amount: int):
         if (category := ctx.channel.category) != None:
             if category.id == Categories.in_progress:
@@ -221,7 +221,7 @@ class Staff(commands.Cog):
     
     
     @commands.command()
-    @commands.has_any_role(*STAFF_ROLES)
+    @commands.has_role(STAFF_ROLES)
     async def status(self, ctx):
         emote = discord.utils.get(ctx.guild.emojis, id=EMOJI_ID)
         current_status = await database.status(ctx.author.id)

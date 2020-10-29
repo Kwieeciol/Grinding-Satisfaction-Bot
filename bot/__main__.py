@@ -3,6 +3,7 @@ import logging
 import discord
 from discord.ext import commands
 from dotenv import load_dotenv
+from resources.constants import Channels, COLOUR, EMOJI_ID
 
 
 load_dotenv()
@@ -74,7 +75,13 @@ for filename in os.listdir('./bot/cogs'):
 
 @client.event
 async def on_command_error(ctx, error):
-    print(type(error), error)
+    emote = discord.utils.get(ctx.guild.emojis, id=EMOJI_ID)
+    if isinstance(error, discord.ext.commands.errors.CommandNotFound):
+        await ctx.send(embed=discord.Embed(description=f'{emote} Command does not exist.', colour=COLOUR))
+
+    else:
+        channel = discord.utils.get(ctx.guild.channels, id=Channels.log)
+        await channel.send(embed=discord.Embed(description=f'```{type(error)}\n{error}```', colour=discord.Colour.gold()))
 
 
 client.run(TOKEN)

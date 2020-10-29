@@ -10,16 +10,16 @@ class Channels:
     lounge = 770992341586280518
     queued = 740951313482907748
     bot_commands = 745939379683590168
+    log = 771335478372204575
 
 class Roles:
     management = 741244092067086356
-    hr_manager = 746283922698272830
     staff = 713354499254648882
     customer = 769869836175933472
 
 proceed_message = 'Are you sure you want to proceed?'
 
-MODERATION_ROLES = Roles.management, Roles.hr_manager
+MODERATION_ROLES = Roles.management
 STAFF_ROLES = Roles.staff
 
 URL = 'http://grindingsatisfaction.herokuapp.com'
