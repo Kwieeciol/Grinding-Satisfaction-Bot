@@ -8,6 +8,11 @@ from .database import fetch_order
 __all__ = ['date', 'return_int', 'edit_embed', 'edit_progress', '_is_order_embed', '_is_proceed_embed', 'total_price']
 
 def date():
+    """Returns todays date
+
+    Returns:
+        [str]: Todays date
+    """
     return datetime.datetime.now().strftime('%d.%m.%Y')
 
 

@@ -31,11 +31,11 @@ def _check_order(option, embed):
 class Staff(commands.Cog):
     def __init__(self, client):
         self.client = client
+        self.emote = client.get_emoji(EMOJI_ID)
 
 
     async def proceed(self, ctx):
-        emote = discord.utils.get(ctx.guild.emojis, id=EMOJI_ID)
-        message = await ctx.send(embed=discord.Embed(description=f'{emote} {proceed_message}', colour=COLOUR))
+        message = await ctx.send(embed=discord.Embed(description=f'{self.emote} {proceed_message}', colour=COLOUR))
         await message.add_reaction('✅')
         await message.add_reaction('❌')
 
@@ -137,8 +137,7 @@ class Staff(commands.Cog):
 
 
     async def _finish_order(self, ctx):
-        emote = discord.utils.get(ctx.guild.emojis, id=EMOJI_ID)
-        await ctx.send(embed=discord.Embed(description=f'{emote} Please, finish the order before you change the status.', colour=COLOUR))
+        await ctx.send(embed=discord.Embed(description=f'{self.emote} Please, finish the order before you change the status.', colour=COLOUR))
 
         pins = await ctx.channel.pins()
         message = pins[0]
@@ -207,28 +206,26 @@ class Staff(commands.Cog):
                 message = pins[0]
                 embed = message.embeds[0]
 
-                emote = discord.utils.get(ctx.guild.emojis, id=EMOJI_ID)
                 # Editing the embed
                 embed = edit_progress(embed, amount)
                 if _check_order('progress', embed):
                     id = return_int(ctx.channel.name)
-                    await ctx.send(embed=discord.Embed(description=f'{emote} Changed progress of **GS-{id}** to **{amount}**', colour=COLOUR))
+                    await ctx.send(embed=discord.Embed(description=f'{self.emote} Changed progress of **GS-{id}** to **{amount}**', colour=COLOUR))
                     await message.edit(embed=embed)
                     # await database.set_progress(id, amount)
 
                 else:
-                    await ctx.send(embed=discord.Embed(description=f'{emote} Progress cannot exceed the limit.', colour=COLOUR))
+                    await ctx.send(embed=discord.Embed(description=f'{self.emote} Progress cannot exceed the limit.', colour=COLOUR))
     
     
     @commands.command()
     @commands.has_role(STAFF_ROLES)
     async def status(self, ctx):
-        emote = discord.utils.get(ctx.guild.emojis, id=EMOJI_ID)
         current_status = await database.status(ctx.author.id)
         if current_status:
-            await ctx.send(embed=discord.Embed(description=f'{emote} You set yourself to **active**', colour=COLOUR))
+            await ctx.send(embed=discord.Embed(description=f'{self.self.emote} You set yourself to **active**', colour=COLOUR))
         else:
-            await ctx.send(embed=discord.Embed(description=f'{emote} You set yourself to **inactive**', colour=COLOUR))
+            await ctx.send(embed=discord.Embed(description=f'{self.self.emote} You set yourself to **inactive**', colour=COLOUR))
 
 
 def setup(client):

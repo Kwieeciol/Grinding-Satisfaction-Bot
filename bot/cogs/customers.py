@@ -2,7 +2,7 @@ import datetime
 import discord
 from discord.ext import commands
 import resources.constants as constants
-from resources.constants import COLOUR
+from resources.constants import COLOUR, EMOJI_ID
 import resources.database as database
 import resources.embeds as embeds
 
@@ -24,6 +24,7 @@ def _storage_check(storage, storages):
 class Customers(commands.Cog):
     def __init__(self, client):
         self.client = client
+        self.emote = client.get_emote(EMOJI_ID)
 
 
     @commands.command()

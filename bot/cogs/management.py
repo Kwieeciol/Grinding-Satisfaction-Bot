@@ -23,12 +23,12 @@ def convert_args(args):
 class Management(commands.Cog):
     def __init__(self, client):
         self.client = client
+        self.emote = client.get_emoji(EMOJI_ID)
 
 
     @commands.command()
     @commands.has_role(MODERATION_ROLES)
     async def edit(self, ctx, *args):
-        emote = discord.utils.get(ctx.guild.emojis, id=EMOJI_ID)
         if (category := ctx.channel.category):
             if category.id == Categories.in_progress:
                 if (options := convert_args(args)):
@@ -38,7 +38,7 @@ class Management(commands.Cog):
                         pins = await ctx.channel.pins()
                         message = pins[0]
                         embed = message.embeds[0]
-                        await ctx.send(embed=discord.Embed(description=f'{emote} Please wait... Editing the order.', colour=COLOUR))
+                        await ctx.send(embed=discord.Embed(description=f'{self.emote} Please wait... Editing the order.', colour=COLOUR))
 
                         id = return_int(embed.title)
                         # Editing the database
@@ -48,13 +48,13 @@ class Management(commands.Cog):
 
                         # await message.edit(embed=new_embed)
                     else:
-                        await ctx.send(embed=discord.Embed(description=f'{emote} Please use only digits.', colour=COLOUR))
+                        await ctx.send(embed=discord.Embed(description=f'{self.emote} Please use only digits.', colour=COLOUR))
                 else:
-                    await ctx.send(embed=discord.Embed(description=f'{emote} Please use valid arguments **(priority, amount, storage, discount)**', colour=COLOUR))
+                    await ctx.send(embed=discord.Embed(description=f'{self.emote} Please use valid arguments **(priority, amount, storage, discount)**', colour=COLOUR))
             else:
-                await ctx.send(embed=discord.Embed(description=f'{emote} Please use this command in a valid channel.', colour=COLOUR))
+                await ctx.send(embed=discord.Embed(description=f'{self.emote} Please use this command in a valid channel.', colour=COLOUR))
         else:
-            await ctx.send(embed=discord.Embed(description=f'{emote} Please use this command in a valid channel.', colour=COLOUR))
+            await ctx.send(embed=discord.Embed(description=f'{self.emote} Please use this command in a valid channel.', colour=COLOUR))
 
 
     @commands.command()
@@ -63,13 +63,12 @@ class Management(commands.Cog):
         def check(emoji, author):
             return str(emoji) == '✅' and author == ctx.author
 
-        emote = discord.utils.get(ctx.guild.emojis, id=EMOJI_ID)
         if (category := ctx.channel.category) != None:
             if category.id == Categories.in_progress:
                 # ID of the order
                 id = return_int(ctx.channel.name)
 
-                message = await ctx.send(embed=discord.Embed(description=f'{emote} Are you sure you want to cancel **GS-{id}**?', colour=COLOUR))
+                message = await ctx.send(embed=discord.Embed(description=f'{self.emote} Are you sure you want to cancel **GS-{id}**?', colour=COLOUR))
                 await message.add_reaction('✅')
                 await message.add_reaction('❌')
 
@@ -79,7 +78,7 @@ class Management(commands.Cog):
                     customer_role = discord.utils.get(ctx.guild.roles, name=f'GS-{id}')
                     worker_role =  discord.utils.get(ctx.guild.roles, name=f'GS-{id} worker')
                     # Creating an cancel embed
-                    embed = discord.Embed(description=f'{emote} Hi! **GS-{id}** has been **cancelled**.', colour=COLOUR)
+                    embed = discord.Embed(description=f'{self.emote} Hi! **GS-{id}** has been **cancelled**.', colour=COLOUR)
                     # Getting the worker
                     worker = [member for member in ctx.guild.members for role in member.roles if role == worker_role][0]
                     await worker.send(embed=embed)
@@ -100,9 +99,9 @@ class Management(commands.Cog):
                 else:
                     await message.delete()
             else:
-                await ctx.send(embed=discord.Embed(description=f'{emote} Please use this command in a valid channel.', colour=COLOUR))
+                await ctx.send(embed=discord.Embed(description=f'{self.emote} Please use this command in a valid channel.', colour=COLOUR))
         else:
-            await ctx.send(embed=discord.Embed(description=f'{emote} Please use this command in a valid channel.', colour=COLOUR))
+            await ctx.send(embed=discord.Embed(description=f'{self.emote} Please use this command in a valid channel.', colour=COLOUR))
 
 
 def setup(client):

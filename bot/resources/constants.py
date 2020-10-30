@@ -11,6 +11,7 @@ class Channels:
     queued = 740951313482907748
     bot_commands = 745939379683590168
     log = 771335478372204575
+    webhook = 771796441411747841
 
 class Roles:
     management = 741244092067086356
