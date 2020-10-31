@@ -31,14 +31,14 @@ def _check_order(option, embed):
 class Staff(commands.Cog):
     def __init__(self, client):
         self.client = client
-        self.emote = client.get_emoji(EMOJI_ID)
+        self.emote = f'<:gs:{EMOJI_ID}>'
 
 
     async def proceed(self, ctx):
         message = await ctx.send(embed=discord.Embed(description=f'{self.emote} {proceed_message}', colour=COLOUR))
         await message.add_reaction('✅')
         await message.add_reaction('❌')
-
+    
 
     async def cancel_proceed(self, ctx):
         # Deleting the 'proceed' message

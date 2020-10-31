@@ -23,7 +23,7 @@ def convert_args(args):
 class Management(commands.Cog):
     def __init__(self, client):
         self.client = client
-        self.emote = client.get_emoji(EMOJI_ID)
+        self.emote = f'<:gs:{EMOJI_ID}>'
 
 
     @commands.command()

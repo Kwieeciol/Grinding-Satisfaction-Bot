@@ -24,7 +24,7 @@ def _storage_check(storage, storages):
 class Customers(commands.Cog):
     def __init__(self, client):
         self.client = client
-        self.emote = client.get_emote(EMOJI_ID)
+        self.emote = f'<:gs:{EMOJI_ID}>'
 
 
     @commands.command()
