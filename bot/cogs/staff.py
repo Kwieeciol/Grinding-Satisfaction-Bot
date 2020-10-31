@@ -113,7 +113,7 @@ class Staff(commands.Cog):
         await message.clear_reactions()
         await message.add_reaction('✅')
         # Sending the final message
-        await ctx.send(f'Hi, {customer.mention}! Your order **GS-{id}** is ready to be collected! Please contact {ctx.author.mention} for collection timings')
+        await ctx.send(embed=discord.Embed(description=f'{self.emote} Hi, {customer.mention}! Your order **GS-{id}** is ready to be collected! Please contact {ctx.author.mention} for collection timings', colour=COLOUR))
         # Changing the order to 'pending-collection' status in the database
         # await database.collection(id)
 

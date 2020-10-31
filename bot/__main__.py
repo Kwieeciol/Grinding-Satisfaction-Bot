@@ -84,4 +84,5 @@ async def on_command_error(ctx, error):
         await channel.send(embed=discord.Embed(description=f'```{type(error)}\n{error}```', colour=discord.Colour.gold()))
 
 
-client.run(TOKEN)
+if __name__ == '__main__':
+    client.run(TOKEN)
