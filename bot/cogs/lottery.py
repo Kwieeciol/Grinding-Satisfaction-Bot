@@ -31,6 +31,33 @@ class Lottery(commands.Cog):
             yaml.dump(data, file)
     
     
+    @commands.command()
+    @commands.has_role(MODERATION_ROLES)
+    async def unlotto(self, ctx, number: int):
+        with open('bot/resources/lottery.yaml', 'r') as file:
+            data = yaml.safe_load(file)
+        
+        if number in data['lottery']:
+            if data['lottery'][number] != None:
+                data['lottery'][number] = None
+                message_Id = data['message_id']
+
+                with open('bot/resources/lottery.yaml', 'w') as file:
+                    yaml.dump(data, file)
+                
+                channel = self.client.get_channel(Channels.lottery)
+                message = await channel.fetch_message(message_Id)
+
+                content = '\n'.join([f'{entry}. <@{user}>' if user != None else f'{entry}.' for entry, user in data['lottery'].items()])
+
+                await message.edit(content=content)
+                await ctx.send(embed=discord.Embed(description=f"{self.emote} Unlotted **{number}**", colour=COLOUR))
+            else:
+                await ctx.send(embed=discord.Embed(description=f"{self.emote} **{number}** is already null", colour=COLOUR))
+        else:
+            await ctx.send(embed=discord.Embed(description=f"{self.emote} Please choose a valid number", colour=COLOUR))
+    
+    
     @commands.command(aliases=['l', 'lotto'])
     @commands.has_role(STAFF_ROLES)
     async def lottery(self, ctx, number: int):
