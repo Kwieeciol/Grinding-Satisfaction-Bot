@@ -15,9 +15,11 @@ def _check_limit(amount, limit):
 
 
 def _storage_check(storage, storages):
-    if storage.content.isdigit():
-        if int(storage) in len(storages):
-            return True
+    if storage.content.lower() in storages:
+        return True
+    # if storage.content.isdigit():
+    #     if int(storage) in len(storages):
+    #         return True
     return False
 
 
@@ -44,58 +46,77 @@ class Customers(commands.Cog):
     @commands.command()
     async def new(self, ctx):
         def check(m):
-            if m.guild == None and m.content.lower() == 'cancel':
+            if m.content.lower() == 'cancel':
                 raise KeyError('Cancelled command')
             return m.guild == None and m.author == ctx.author
-
-        # Checking if the customer exists
+        
+    # Checking if the customer exists in the database
         customer = await database.check_customer(ctx.author.id)
 
         if not customer:
+            # Tycoon ID
             await ctx.author.send(embed=embeds.customer_embed_1(ctx))
             tycoon_id = await self.client.wait_for('message', check=check)
-            # Making sure the tycoon ID is an integer
+            # Making sure the message is a digit
             while not tycoon_id.content.isdigit():
                 await ctx.author.send(embed=embeds.not_valid_answer)
                 tycoon_id = await self.client.wait_for('message', check=check)
-
+            # Tycoon name
             await ctx.author.send(embed=embeds.customer_embed_2(ctx))
             tycoon_name = await self.client.wait_for('message', check=check)
-            # Addind the non-existing customer to the database
-            customer_data = {'name': ctx.author.name,
-                            'discord_id': ctx.author.id,
-                            'tycoon_name': tycoon_name.content,
-                            'tycoon_id': int(tycoon_id.content)}
-
+            # Adding the customer to the database
+            customer_data = {
+                'name': ctx.author.name,
+                'discord_id': ctx.author.id,
+                'tycoon_name': tycoon_name.content,
+                'tycoon_id': int(tycoon_id.content)
+            }
             await database.new_customer(customer_data)
-        # Fetching the items from the database
+        
+        # Fetching the items and storages
         items = await database.fetch_items()
-
+        storages = await database.fetch_storages()
+        # Item
         await ctx.author.send(embed=embeds.order_embed_1(ctx, items))
         item = await self.client.wait_for('message', check=check)
         # Checking if the item is valid
         while not item.content.lower() in items:
             await ctx.author.send(embed=embeds.not_valid_answer)
             item = await self.client.wait_for('message', check=check)
-        # Getting the price each and limit of the item
-        price, limit = items[item.content.lower()]
-
+        
+        _, price_each, limit = items[item.content.lower()].values()
+        # Amount
         await ctx.author.send(embed=embeds.order_embed_2(ctx, item.content, limit))
         amount = await self.client.wait_for('message', check=check)
         # Checking if the amount is valid
         while not _check_limit(amount.content, limit):
             await ctx.author.send(embed=embeds.not_valid_answer)
             amount = await self.client.wait_for('message', check=check)
-
-        # Fetching the available storages
-        storages = await database.fetch_storages()
+        # Storage
         await ctx.author.send(embed=embeds.order_embed_3(ctx, storages))
         storage = await self.client.wait_for('message', check=check)
-
+        # Checking if the chsoen storage is valid
         while not _storage_check(storage, storages):
             await ctx.author.send(embed=embeds.not_valid_answer)
             storage = await self.client.wait_for('message', check=check)
+        storage_id, storage_fee = storages[storage.content.lower()].values()
+        # Priority
+        await ctx.author.send(embed=embeds.order_embed_4(ctx))
+        priority = await self.client.wait_for('message', check=check)
 
+        if priority.content.lower() in ['yes', 'ye', 'y']:
+            priority = 1
+        else:
+            priority = 0
+
+        order_data = {
+            'priority': priority,
+            'discord_id': ctx.author.id,
+            'product_name': item.content.lower(),
+            'price_each': price_each,
+            'amount': int(amount.content),
+            'storage_id': storage_id
+        }
 
 
 def setup(client):

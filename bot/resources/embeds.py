@@ -20,13 +20,13 @@ def customer_embed_2(ctx):
     return embed
 
 def order_embed_1(ctx, items):
-    message = '   {:19s} Price Each\n{}\n'.format('Item', '-'*30)
-    for num, item in enumerate(items.items()):
-        item, value = item
-        string = '{:d}. {:20s} ${:,}'.format(num+1, item.title(), int(value[0]))
-        message = message + string + '\n'
+    content = '   {:19s} Price Each\n{}\n'.format('Item', '-'*35)
+    for item, attrs in items.items():
+        id, price, limit = attrs.values()
+        line = '{:d}. {:20s} ${:,}'.format(id, item.title(), price)
+        content += f'{line}\n'
 
-    embed = discord.Embed(title='What would you like to order?', description=f'```{message}```\nThe displayed prices are per **one** item.', colour=COLOUR)
+    embed = discord.Embed(title='What would you like to order?', description=f'```{content}```\nThe displayed prices are per **one** item.', colour=COLOUR)
     embed.add_field(name='\u200b', value=f"{ctx.author}\nType 'cancel' to cancel the order process. • {date()}")
     embed.set_author(name=f'Order details', icon_url=ctx.guild.icon_url)
     return embed
@@ -38,13 +38,22 @@ def order_embed_2(ctx, item, limit):
     return embed
 
 def order_embed_3(ctx, storages):
-    message = '   {:20s} Fee\n{}\n'.format('Storage', '-'*30)
-    for num, storage in enumerate(storages.items()):
-        storage, value = storages
-        string = '{}{:20s} ${:,}'.format(storage.title(), value[-1])
-        message = message + string + '\n'
+    content = '   {:20s} Fee\n{}\n'.format('Storage', '-'*35)
+    for storage, attrs in storages.items():
+        id, fee = attrs.values()
+        line = '{:d}. {:20s} ${:,}'.format(id, storage.title(), fee)
+        content += f"{line}\n"
 
-    embed = discord.Embed(title='In what storage would you like it to be stored?', description=f"```{message}```", colour=COLOUR)
+    embed = discord.Embed(title='In what storage would you like it to be stored?', description=f"```{content}```", colour=COLOUR)
     embed.add_field(name='\u200b', value=f"{ctx.author}\nType 'cancel' to cancel the order process. • {date()}")
     embed.set_author(name=f'Order details', icon_url=ctx.guild.icon_url)
     return embed
+
+def order_embed_4(ctx):
+    embed = discord.Embed(title='Would you like to increase priority?', description="The price will increase by **25%**\nPlease type **yes** or **no**", colour=COLOUR)
+    embed.add_field(name='\u200b', value=f"{ctx.author}\nType 'cancel' to cancel the order process. • {date()}")
+    embed.set_author(name=f'Order details', icon_url=ctx.guild.icon_url)
+    return embed
+
+def order_embed_5(ctx, price):
+    pass

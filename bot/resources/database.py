@@ -3,7 +3,7 @@ import asyncio
 import json
 from .constants import URL
 
-__all__ = ['new_order', 'assign_order', 'set_progress', 'edit', 'collection', 'completed',
+__all__ = ['session', 'new_order', 'assign_order', 'set_progress', 'edit', 'collection', 'completed',
             'fetch_order', 'new_customer', 'check_customer', 'items', 'storages', 'status']
 
 async def new_session():
@@ -11,13 +11,13 @@ async def new_session():
 
 session = asyncio.get_event_loop().run_until_complete(new_session())
 
-async def new_order(**kwargs):
+async def new_order(data: dict):
     """Creates a new order in the database.
 
     Returns:
         [dict]: Order data
     """
-    async with session.post(f'{URL}/orders/new', data=kwargs) as resp:
+    async with session.post(f'{URL}/orders/new', data=data) as resp:
         return await resp.json()
 
 
@@ -154,7 +154,7 @@ async def fetch_items():
     """
     async with session.get(f'{URL}/prices') as resp:
         html = await resp.json()
-        items = {item['name'].lower(): [item['price'], item['limit']] for item in html}
+        items = {item['name'].lower(): {'id': item['id'], 'price': item['price'], 'limit': item['limit']} for item in html}
         return items
 
 
@@ -164,9 +164,9 @@ async def fetch_storages():
     Returns:
         [dict]: Storages details
     """
-    async with session.get(f'{URL}.storages') as resp:
+    async with session.get(f'{URL}/storages') as resp:
         html = await resp.json()
-        storages = {storage['name'].lower(): [storage['id'], storage['fee']] for storage in html}
+        storages = {storage['name'].lower(): {'id': storage['id'], 'fee': storage['fee']} for storage in html}
         return storages
 
 

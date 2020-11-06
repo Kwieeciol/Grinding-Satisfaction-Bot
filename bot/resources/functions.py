@@ -35,10 +35,10 @@ def total_price(id: int):
         id (int): The order ID
     
     Returns:
-        [str]: Total price separated by commas
+        [int]: Total price
     """
-    # details = asyncio.get_event_loop().run_until_complete(fetch_order(id))
-    pass
+    loop = asyncio.get_event_loop()
+    order_data = loop.run_until_complete(fetch_data(id))
 
 
 def edit_embed(embed: discord.Embed, options: dict):
@@ -55,7 +55,7 @@ def edit_embed(embed: discord.Embed, options: dict):
     fields = dct['fields']
 
     id = return_int(embed.title)
-    new_price = total_price()
+    new_price = total_price(id)
 
     for field in fields:
         name, value, _ = field.values()

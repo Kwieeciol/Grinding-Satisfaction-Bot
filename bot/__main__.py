@@ -1,9 +1,11 @@
 import os
+import asyncio
 import logging
 import discord
 from discord.ext import commands
 from dotenv import load_dotenv
 from resources.constants import Channels, COLOUR, EMOJI_ID
+from resources.database import session
 
 
 load_dotenv()
@@ -75,13 +77,29 @@ for filename in os.listdir('./bot/cogs'):
 
 @client.event
 async def on_command_error(ctx, error):
-    emote = discord.utils.get(ctx.guild.emojis, id=EMOJI_ID)
     if isinstance(error, discord.ext.commands.errors.CommandNotFound):
         await ctx.send(embed=discord.Embed(description=f'{emote} Command does not exist.', colour=COLOUR))
+    
+    elif isinstance(error, discord.ext.commands.errors.NotOwner):
+        await ctx.send(embed=discord.Embed(description=f'<:gs:{EMOJI_ID}> Command does not exist.', colour=COLOUR))
+    
+    elif isinstance(error, discord.ext.commands.errors.MissingRole):
+        await ctx.send(embed=discord.Embed(description=f'<:gs:{EMOJI_ID}> Command does not exist.', colour=COLOUR))
 
     else:
-        channel = discord.utils.get(ctx.guild.channels, id=Channels.log)
-        await channel.send(embed=discord.Embed(description=f'```{type(error)}\n{error}```', colour=discord.Colour.gold()))
+        if ctx.guild != None:
+            channel = discord.utils.get(ctx.guild.channels, id=Channels.log)
+            embed = discord.Embed(title=str(type(error)), description=f'```{error}```', colour=discord.Colour.gold())
+            embed.add_field(name='Content:', value=f'{ctx.message.content} | **{str(ctx.author)} ({ctx.author.id})**', inline=False)
+            embed.add_field(name='URL:', value=ctx.message.jump_url, inline=False)
+            await channel.send(embed=embed)
+        else:
+            print(type(error), error)
+
+
+@client.event
+async def on_disconnect():
+    await session.close()
 
 
 if __name__ == '__main__':
