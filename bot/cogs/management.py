@@ -102,6 +102,14 @@ class Management(commands.Cog):
                 await ctx.send(embed=discord.Embed(description=f'{self.emote} Please use this command in a valid channel.', colour=COLOUR))
         else:
             await ctx.send(embed=discord.Embed(description=f'{self.emote} Please use this command in a valid channel.', colour=COLOUR))
+    
+    @commands.command()
+    @commands.cooldown(1, 15, type=commands.BucketType.member)
+    @commands.has_permissions(manage_messages=True)
+    async def clear(ctx, amount: int):
+        def check(m):
+            return not m.pinned
+        await ctx.channel.purge(limit=amount+1, check=check)
 
 
 def setup(client):
