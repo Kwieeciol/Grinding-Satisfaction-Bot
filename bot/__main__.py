@@ -41,6 +41,7 @@ async def ping(ctx):
 
 
 @client.command()
+@commands.cooldown(1, 15, type=commands.BucketType.member)
 @commands.has_permissions(manage_messages=True)
 async def clear(ctx, amount: int):
     def check(m):
