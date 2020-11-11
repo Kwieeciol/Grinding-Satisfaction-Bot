@@ -19,10 +19,7 @@ logger.addHandler(handler)
 
 
 intents = discord.Intents.default()
-intents.reactions = True
 intents.members = True
-intents.messages = True
-intents.emojis = True
 
 
 client = commands.Bot(command_prefix='!', intents=intents, case_insensitive=True, owner_ids=[675002733056622592, 610403762976063489])
