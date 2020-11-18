@@ -24,14 +24,14 @@ def _storage_check(storage, storages):
 
 
 class Customers(commands.Cog):
-    def __init__(self, client):
-        self.client = client
+    def __init__(self, bot):
+        self.bot = bot
         self.emote = f'<:gs:{EMOJI_ID}>'
 
 
     @commands.command()
     async def order(self, ctx):
-        channel = self.client.get_channel(constants.Channels.queued)
+        channel = self.bot.get_channel(constants.Channels.queued)
         embed = discord.Embed(title='*GS-1*', colour=COLOUR)
         embed.set_author(name=ctx.author, icon_url=ctx.author.avatar_url)
         embed.add_field(name='Cargo', value='Sand', inline=True)
@@ -56,14 +56,14 @@ class Customers(commands.Cog):
         if not customer:
             # Tycoon ID
             await ctx.author.send(embed=embeds.customer_embed_1(ctx))
-            tycoon_id = await self.client.wait_for('message', check=check)
+            tycoon_id = await self.bot.wait_for('message', check=check)
             # Making sure the message is a digit
             while not tycoon_id.content.isdigit():
                 await ctx.author.send(embed=embeds.not_valid_answer)
-                tycoon_id = await self.client.wait_for('message', check=check)
+                tycoon_id = await self.bot.wait_for('message', check=check)
             # Tycoon name
             await ctx.author.send(embed=embeds.customer_embed_2(ctx))
-            tycoon_name = await self.client.wait_for('message', check=check)
+            tycoon_name = await self.bot.wait_for('message', check=check)
             # Adding the customer to the database
             customer_data = {
                 'name': ctx.author.name,
@@ -78,31 +78,31 @@ class Customers(commands.Cog):
         storages = await database.fetch_storages()
         # Item
         await ctx.author.send(embed=embeds.order_embed_1(ctx, items))
-        item = await self.client.wait_for('message', check=check)
+        item = await self.bot.wait_for('message', check=check)
         # Checking if the item is valid
         while not item.content.lower() in items:
             await ctx.author.send(embed=embeds.not_valid_answer)
-            item = await self.client.wait_for('message', check=check)
+            item = await self.bot.wait_for('message', check=check)
         
         _, price_each, limit = items[item.content.lower()].values()
         # Amount
         await ctx.author.send(embed=embeds.order_embed_2(ctx, item.content, limit))
-        amount = await self.client.wait_for('message', check=check)
+        amount = await self.bot.wait_for('message', check=check)
         # Checking if the amount is valid
         while not _check_limit(amount.content, limit):
             await ctx.author.send(embed=embeds.not_valid_answer)
-            amount = await self.client.wait_for('message', check=check)
+            amount = await self.bot.wait_for('message', check=check)
         # Storage
         await ctx.author.send(embed=embeds.order_embed_3(ctx, storages))
-        storage = await self.client.wait_for('message', check=check)
+        storage = await self.bot.wait_for('message', check=check)
         # Checking if the chsoen storage is valid
         while not _storage_check(storage, storages):
             await ctx.author.send(embed=embeds.not_valid_answer)
-            storage = await self.client.wait_for('message', check=check)
+            storage = await self.bot.wait_for('message', check=check)
         storage_id, storage_fee = storages[storage.content.lower()].values()
         # Priority
         await ctx.author.send(embed=embeds.order_embed_4(ctx))
-        priority = await self.client.wait_for('message', check=check)
+        priority = await self.bot.wait_for('message', check=check)
 
         if priority.content.lower() in ['yes', 'ye', 'y']:
             priority = 1
@@ -119,5 +119,5 @@ class Customers(commands.Cog):
         }
 
 
-def setup(client):
-    client.add_cog(Customers(client))
+def setup(bot):
+    bot.add_cog(Customers(bot))

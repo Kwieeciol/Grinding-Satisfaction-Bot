@@ -6,20 +6,20 @@ from resources.constants import Channels, MODERATION_ROLES, STAFF_ROLES, COLOUR,
 
 
 class Lottery(commands.Cog):
-    def __init__(self, client):
-        self.client = client
+    def __init__(self, bot):
+        self.bot = bot
         self.emote = f'<:gs:{EMOJI_ID}>'
 
     
     @commands.command(aliases=['nt'])
     @commands.has_role(MODERATION_ROLES)
-    async def new_lottery(self, client, entries: int):
+    async def new_lottery(self, bot, entries: int):
         def check(m):
             return not m.pinned
 
         data = {'lottery': {i: None for i in range(1, entries+1)}}
 
-        channel = self.client.get_channel(Channels.lottery)
+        channel = self.bot.get_channel(Channels.lottery)
         content = '.\n'.join(str(i) for i in range(1, entries+1)) + '.'
 
         await channel.purge(limit=50, check=check)
@@ -45,7 +45,7 @@ class Lottery(commands.Cog):
                 with open('bot/resources/lottery.yaml', 'w') as file:
                     yaml.dump(data, file)
                 
-                channel = self.client.get_channel(Channels.lottery)
+                channel = self.bot.get_channel(Channels.lottery)
                 message = await channel.fetch_message(message_Id)
 
                 content = '\n'.join([f'{entry}. <@{user}>' if user != None else f'{entry}.' for entry, user in data['lottery'].items()])
@@ -75,7 +75,7 @@ class Lottery(commands.Cog):
                     with open('bot/resources/lottery.yaml', 'w') as file:
                         yaml.dump(data, file)
 
-                    channel = self.client.get_channel(Channels.lottery)
+                    channel = self.bot.get_channel(Channels.lottery)
                     message = await channel.fetch_message(data['message_id'])
                     
                     content = '\n'.join([f'{entry}. <@{user}>' if user != None else f'{entry}.' for entry, user in data['lottery'].items()])                    
@@ -88,5 +88,5 @@ class Lottery(commands.Cog):
             await ctx.send(embed=discord.Embed(description=f"{self.emote} You can't enter the lottery anymore.", colour=COLOUR))
 
 
-def setup(client):
-    client.add_cog(Lottery(client))
+def setup(bot):
+    bot.add_cog(Lottery(bot))

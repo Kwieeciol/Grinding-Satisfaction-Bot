@@ -5,9 +5,9 @@ from resources.database import fetch_items, fetch_storages
 
 
 class Owner(commands.Cog):
-    def __init__(self, client):
-        self.client = client
+    def __init__(self, bot):
+        self.bot = bot
 
 
-def setup(client):
-    client.add_cog(Owner(client))
+def setup(bot):
+    bot.add_cog(Owner(bot))

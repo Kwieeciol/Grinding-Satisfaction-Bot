@@ -21,8 +21,8 @@ def convert_args(args):
 
 
 class Management(commands.Cog):
-    def __init__(self, client):
-        self.client = client
+    def __init__(self, bot):
+        self.bot = bot
         self.emote = f'<:gs:{EMOJI_ID}>'
 
 
@@ -73,7 +73,7 @@ class Management(commands.Cog):
                 await message.add_reaction('❌')
 
                 try:
-                    reaction, user = await self.client.wait_for('reaction_add', timeout=60.0, check=check)
+                    reaction, user = await self.bot.wait_for('reaction_add', timeout=60.0, check=check)
 
                     customer_role = discord.utils.get(ctx.guild.roles, name=f'GS-{id}')
                     worker_role =  discord.utils.get(ctx.guild.roles, name=f'GS-{id} worker')
@@ -112,5 +112,5 @@ class Management(commands.Cog):
         await ctx.channel.purge(limit=amount+1, check=check)
 
 
-def setup(client):
-    client.add_cog(Management(client))
+def setup(bot):
+    bot.add_cog(Management(bot))
