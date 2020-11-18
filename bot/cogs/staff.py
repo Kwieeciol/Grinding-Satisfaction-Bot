@@ -29,8 +29,8 @@ def _check_order(option, embed):
 
 
 class Staff(commands.Cog):
-    def __init__(self, client):
-        self.client = client
+    def __init__(self, bot):
+        self.bot = bot
         self.emote = f'<:gs:{EMOJI_ID}>'
 
 
@@ -148,13 +148,13 @@ class Staff(commands.Cog):
 
     @commands.Cog.listener()
     async def on_raw_reaction_add(self, payload):
-        if payload.user_id != self.client.user.id:
+        if payload.user_id != self.bot.user.id:
             if payload.emoji.name == '✅':
-                channel = self.client.get_channel(payload.channel_id)
+                channel = self.bot.get_channel(payload.channel_id)
                 message = await channel.fetch_message(payload.message_id)
                 author = channel.guild.get_member(payload.user_id)
 
-                ctx = await self.client.get_context(message)
+                ctx = await self.bot.get_context(message)
                 ctx.author = author
 
                 if channel.id == Channels.queued:
@@ -184,10 +184,10 @@ class Staff(commands.Cog):
                             await self.finish_order(ctx)
 
             elif payload.emoji.name == '❌':
-                channel = self.client.get_channel(payload.channel_id)
+                channel = self.bot.get_channel(payload.channel_id)
                 message = await channel.fetch_message(payload.message_id)
 
-                ctx = await self.client.get_context(message)
+                ctx = await self.bot.get_context(message)
 
                 if (category := channel.category) != None:
                     if category.id == Categories.in_progress or category.id == Categories.pending_collection:
@@ -228,5 +228,5 @@ class Staff(commands.Cog):
             await ctx.send(embed=discord.Embed(description=f'{self.self.emote} You set yourself to **inactive**', colour=COLOUR))
 
 
-def setup(client):
-    client.add_cog(Staff(client))
+def setup(bot):
+    bot.add_cog(Staff(bot))
