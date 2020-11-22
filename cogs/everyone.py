@@ -13,7 +13,7 @@ class Everyone(commands.Cog):
         start = time.perf_counter()
         em = discord.Embed(title=f'Pong! {self.bot.emoji}', colour=discord.Colour.greyple())
         message = await ctx.send(embed=em)
-        # Stopping the embed
+        # Stopping the timer
         end = time.perf_counter()
         total_time = (end - start) * 1000
 
