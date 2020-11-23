@@ -1,3 +1,4 @@
+import discord
 from dateutil import parser
 
 def convert_time(string: str) -> str or None:
@@ -241,7 +242,7 @@ class Order:
         self.created_at = convert_time(data['created_at'])
         self.updated_at = convert_time(data['updated_at'])
         self.priority = data['priority']
-        self.status = data['status']
+        self.status = data['status'].lower()
         self.progress = data['progress']
         self.customer = Customer(**data['customer'])
         self.item = Item(**data['product_name'])
@@ -344,6 +345,26 @@ class Order:
         async with self.session.patch(f'{self.url}/cancel') as resp:
             data = await resp.json()
             self._update(**data)
+    
+
+    @property
+    def embed(self):
+        """|property|
+        
+        Returns an embed with the order details
+        
+        """
+        fields = ['item', 'amount', 'storage', 'priority', 'total_price']
+        embed = discord.Embed(title=f'*GS-{self.id}*', colour=discord.Colour.dark_purple())
+        for field in fields:
+            name = field.replace('_', ' ').title()
+            value = getattr(self, field)
+            embed.add_field(name=name, value=value)
+
+        if self.status in ['in progress', 'pending collection']:
+            embed.add_field(name='Progress', value=self.progress)
+
+        return embed
 
 
     def _update(self, **data):
