@@ -64,8 +64,7 @@ def return_int(s: str) -> int:
 
 
 class OrderContext(commands.Context):
-    @property
-    async def order(self):
+    async def get_order(self):
         channel = self.channel
         category = channel.category
 
