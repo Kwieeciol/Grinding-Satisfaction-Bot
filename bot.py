@@ -8,7 +8,7 @@ import aiohttp
 import discord
 from discord.ext import commands, tasks
 from datetime import datetime
-from cogs.utils.orders.database import database
+from utils.orders.database import database
 
 __all__ = ['roles', 'GrindingSatisfactionBot']
 
@@ -58,6 +58,11 @@ def is_order_embed(message):
     except Exception as e:
         return False
 
+
+def return_int(s: str) -> int:
+    return int(''.join(l for l in s if l.isdigit()))
+
+
 class OrderContext(commands.Context):
     @property
     async def order(self):
@@ -66,17 +71,12 @@ class OrderContext(commands.Context):
 
         if channel.id == channels['orders']:
             if is_order_embed(self.message):
-                order_id = int(self.message.embeds[0].title.split('-')[-1][:1])
-                data = await self.bot.database.fetch_order(order_id)
-                return data
-
-        if category is not None:
-            if category.id == categories['in_progress']:
-                order_id = int(channel.name.split('-')[-1][:1])
+                order_id = return_int(self.message.embeds[0])
                 return await self.bot.database.fetch_order(order_id)
 
-            elif category.id == categories['pending_collection']:
-                order_id = int(channel.name.split('-')[-1][:1])
+        if category is not None:
+            if category.id == in categories:
+                order_id = return_int(channel.name)
                 return await self.bot.database.fetch_order(order_id)
 
         return None
@@ -90,8 +90,8 @@ class GrindingSatisfactionBot(commands.Bot):
         super().__init__(command_prefix='!', description='Grinding Satisfaction Bot for GSR', intents=intents,
                         case_insensitive=True)
         
-        self.database = database()
-        self.session = self.database.session
+        self.session = aiohttp.ClientSession(loop=self.loop)
+        self.database = database(self.session)
 
         self.format = options.pop('time_format', '[%H:%M:%S]')
         self.hide = options.pop('hide', True)
