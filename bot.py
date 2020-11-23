@@ -123,12 +123,12 @@ class GrindingSatisfactionBot(commands.Bot):
         return datetime.utcnow().strftime(self.format)
     
     
-    @tasks.loop(seconds=5.0)
+    @tasks.loop(seconds=10.0)
     async def session_closed(self):
         # Creates a new session whenever the old one is closed
         if self.session.closed:
             print('{0.time}\tSession is closed... Creating a new one'.format(self))
-            self.session = aiohttp.ClientSession()
+            self.session = aiohttp.ClientSession(loop=self.loop)
             print('{0.time}\tSuccesfully created a new session'.format(self))
 
 
