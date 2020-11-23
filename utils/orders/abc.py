@@ -34,6 +34,10 @@ class Customer:
         return self.id < other.id
     
 
+    def __str__(self):
+        return self.name
+    
+
     def __repr__(self):
         return self.name
 
@@ -117,11 +121,17 @@ class Employee:
     
 
     def __eq__(self, other):
-        return self._data == other._data
+        try:
+            return self._data == other._data
+        except:
+            return str(self) == str(other)
     
 
     def __ne__(self, other):
-        return self._data != other._data
+        try:
+            return self._data != other._data
+        except:
+            return str(self) != str(other)
 
     
     def __gt__(self, other):
@@ -130,6 +140,10 @@ class Employee:
 
     def __lt__(self, other):
         return self.id < other.id
+    
+
+    def __str__(self):
+        return self.name
     
 
     def __repr__(self):
@@ -169,6 +183,10 @@ class Storage:
 
     
     def __str__(self):
+        return self.name
+    
+
+    def __repr__(self):
         return self.name
 
 
@@ -348,7 +366,7 @@ class Order:
 
     def __lt__(self, other):
         return self.id < other.id
-    
+        
 
     def __repr__(self):
         return f'GS-{self.id} | customer = {self.customer} | worker = {self.worker}'
