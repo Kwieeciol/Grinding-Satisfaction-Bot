@@ -32,6 +32,10 @@ class Customer:
 
     def __lt__(self, other):
         return self.id < other.id
+    
+
+    def __repr__(self):
+        return self.name
 
 
 class Employee:
@@ -126,6 +130,10 @@ class Employee:
 
     def __lt__(self, other):
         return self.id < other.id
+    
+
+    def __repr__(self):
+        return self.name
 
 
 class Storage:
@@ -133,17 +141,23 @@ class Storage:
         self._data = data
         self.session = session
         self.id = data['id']
-        self.name = data['name']
+        self.name = data['name'].lower()
         self.fee = data['fee']
         self.faction = data['faction']
     
 
     def __eq__(self, other):
-        return self._data == other._data
+        try:
+            return self._data == other._data
+        except:
+            return str(self) == str(other)
     
 
     def __ne__(self, other):
-        return self._data != other._data
+        try:
+            return self._data != other._data
+        except:
+            return str(self) != str(other)
 
     
     def __gt__(self, other):
@@ -152,6 +166,10 @@ class Storage:
 
     def __lt__(self, other):
         return self.id < other.id
+
+    
+    def __str__(self):
+        return self.name
 
 
 class Item:
@@ -161,17 +179,23 @@ class Item:
         self.id = data['id']
         self.created_at = convert_time(data['created_at'])
         self.updated_at = convert_time(data['updated_at'])
-        self.name = data['name']
+        self.name = data['name'].lower()
         self.price = data['price']
         self.limit = data['limit']
     
 
     def __eq__(self, other):
-        return self._data == other._data
-    
+        try:
+            return self._data == other._data
+        except:
+            return str(self) == str(other)
+
 
     def __ne__(self, other):
-        return self._data != other._data
+        try:
+            return self._data != other._data
+        except:
+            return str(self) != str(other)
 
     
     def __gt__(self, other):
@@ -180,6 +204,14 @@ class Item:
 
     def __lt__(self, other):
         return self.id < other.id
+    
+
+    def __str__(self):
+        return self.name
+    
+
+    def __repr__(self):
+        return self.name
 
 
 class Order:
@@ -316,3 +348,7 @@ class Order:
 
     def __lt__(self, other):
         return self.id < other.id
+    
+
+    def __repr__(self):
+        return f'GS-{self.id} | customer = {self.customer} | worker = {self.worker}'
