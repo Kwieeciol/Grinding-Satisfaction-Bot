@@ -6,7 +6,7 @@ class database:
         self.url = 'http://grindingsatisfaction.herokuapp.com'
         self.session = session
 
-    async def fetch_order(self, order_id: int) -> abc.Order:
+    async def fetch_order(self, order_id: int):
         """|coro|
 
         Retrievies a single order from the database
@@ -26,7 +26,7 @@ class database:
             return abc.Order(self.session **data)
     
 
-    async def fetch_orders(self) -> list[abc.Order]:
+    async def fetch_orders(self):
         """|coro|
 
         Retrievies all orders from the database
@@ -44,7 +44,7 @@ class database:
             return output
     
 
-    async def new_order(self, **kwargs) -> abc.Order:
+    async def new_order(self, **kwargs):
         """|coro|
 
         Creates a new order
@@ -63,7 +63,7 @@ class database:
             return abc.Order(self.session, **data)
 
 
-    async def fetch_customer(self, discord_id: int) -> abc.Customer:
+    async def fetch_customer(self, discord_id: int):
         """|coro|
 
         Retrievies a single customer from the database
@@ -83,7 +83,7 @@ class database:
             return abc.Customer(self.session, **data)
 
 
-    async def fetch_customers(self) -> list[abc.Customer]:
+    async def fetch_customers(self):
         """|coro|
 
         Retrievies all customers from the database
@@ -100,7 +100,7 @@ class database:
             return output
 
     
-    async def new_customer(self, **kwargs) -> abc.Customer:
+    async def new_customer(self, **kwargs):
         """|coro|
         
         Creates a new customer
@@ -119,7 +119,7 @@ class database:
             return abc.Customer(self.session, **data)
 
 
-    async def fetch_employee(self, discord_id: int) -> abc.Employee:
+    async def fetch_employee(self, discord_id: int):
         """|coro|
 
         Retrievies an employee from the database
@@ -139,7 +139,7 @@ class database:
             return abc.Employee(self.session, **data)
     
 
-    async def fetch_employees(self) -> list[abc.Employee]:
+    async def fetch_employees(self):
         """|coro|
 
         Retrievies all employees from the database
@@ -156,7 +156,7 @@ class database:
             return output
 
     
-    async def new_employee(self, **kwargs) -> abc.Employee:
+    async def new_employee(self, **kwargs):
         """|coro|
         
         Creates a new employee
@@ -175,7 +175,7 @@ class database:
             return abc.Employee(self.session, **data)
 
 
-    async def fetch_storage(self, storage_id: int) -> abc.Storage:
+    async def fetch_storage(self, storage_id: int):
         """|coro|
 
         Retrievies a single storage from the database
@@ -195,7 +195,7 @@ class database:
             return abc.Storage(self.session, **data)
     
 
-    async def fetch_storages(self) -> list[abc.Storage]:
+    async def fetch_storages(self):
         """|coro|
 
         Retrievies all storages from the database
@@ -212,7 +212,7 @@ class database:
             return output
 
 
-    async def fetch_item(self, item_id: int) -> abc.Item:
+    async def fetch_item(self, item_id: int):
         """|coro|
 
         Retrievies a single item from the database
@@ -232,7 +232,7 @@ class database:
             return abc.Item(self.session, **data)
     
 
-    async def fetch_items(self) -> list[abc.Item]:
+    async def fetch_items(self):
         """|coro|
 
         Retrievies all items from the database

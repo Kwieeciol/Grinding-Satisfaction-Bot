@@ -8,8 +8,7 @@ class StaffCommands(commands.Cog):
 
     @commands.Cog.listener()
     async def on_order_assign(self, ctx: commands.Context):
-        order = await ctx.order
-        print(order)
+        print(ctx)
     
 
     @commands.Cog.listener()

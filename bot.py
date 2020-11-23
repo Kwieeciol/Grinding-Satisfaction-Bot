@@ -75,7 +75,7 @@ class OrderContext(commands.Context):
                 return await self.bot.database.fetch_order(order_id)
 
         if category is not None:
-            if category.id == in categories:
+            if category.id in categories:
                 order_id = return_int(channel.name)
                 return await self.bot.database.fetch_order(order_id)
 
@@ -95,6 +95,7 @@ class GrindingSatisfactionBot(commands.Bot):
 
         self.format = options.pop('time_format', '[%H:%M:%S]')
         self.hide = options.pop('hide', True)
+
         self.channels = options.pop('channels', {})
         self.categories = options.pop('categories', {})
         # Setting up logging
@@ -106,7 +107,8 @@ class GrindingSatisfactionBot(commands.Bot):
             handler = logging.FileHandler(filename='discord.log', encoding='utf-8', mode='w')
             handler.setFormatter(logging.Formatter('%(asctime)s:%(levelname)s:%(name)s: %(message)s'))
             logger.addHandler(handler)
-
+        
+        self.pid = os.getpid()
 
         self.ignored_commands = options.pop('ignored_commands', [])
         # Loading extensions
@@ -134,7 +136,7 @@ class GrindingSatisfactionBot(commands.Bot):
 
     async def on_ready(self):
         if not hasattr(self, 'uptime'):
-            self.uptime = datetime.utcnow().strftime(self.time)
+            self.uptime = datetime.utcnow().strftime(self.format)
 
         await self.wait_until_ready()
         # Getting the owner `me` and the GS emoji

@@ -81,7 +81,7 @@ class Owner(commands.Cog):
     async def role(self, ctx: commands.Context, role: discord.Role):
         # Subcommand for getting the id of a role
         await ctx.send(f'{role.name}: **{role.id}**')
-
+    
 
 def setup(bot):
     bot.add_cog(Owner(bot))
