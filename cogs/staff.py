@@ -7,17 +7,17 @@ class StaffCommands(commands.Cog):
     
 
     @commands.Cog.listener()
-    async def on_order_assign(self, ctx: commands.Context):
+    async def on_order_assign(self, ctx: commands.Context, worker, order):
         print(ctx)
     
 
     @commands.Cog.listener()
-    async def on_order_status_change(self, ctx: commands.Context):
+    async def on_order_status_change(self, ctx: commands.Context, worker, order):
         print(ctx)
     
 
     @commands.Cog.listener()
-    async def on_order_complete(self, ctx: commands.Context):
+    async def on_order_complete(self, ctx: commands.Context, worker, order):
         print(ctx)
 
 

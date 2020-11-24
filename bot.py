@@ -66,16 +66,10 @@ def return_int(s: str) -> int:
 class OrderContext(commands.Context):
     async def get_order(self):
         channel = self.channel
-        category = channel.category
 
         if channel.id == channels['orders']:
             if is_order_embed(self.message):
                 order_id = return_int(self.message.embeds[0])
-                return await self.bot.database.fetch_order(order_id)
-
-        if category is not None:
-            if category.id in categories:
-                order_id = return_int(channel.name)
                 return await self.bot.database.fetch_order(order_id)
 
         return None
@@ -88,7 +82,7 @@ class GrindingSatisfactionBot(commands.Bot):
 
         super().__init__(command_prefix='!', description='Grinding Satisfaction Bot for GSR', intents=intents,
                         case_insensitive=True)
-        
+        # Creating the session and db instance
         self.session = aiohttp.ClientSession(loop=self.loop)
         self.database = database(self.session)
 
@@ -106,7 +100,7 @@ class GrindingSatisfactionBot(commands.Bot):
             handler = logging.FileHandler(filename='discord.log', encoding='utf-8', mode='w')
             handler.setFormatter(logging.Formatter('%(asctime)s:%(levelname)s:%(name)s: %(message)s'))
             logger.addHandler(handler)
-        
+        # Getting the process id
         self.pid = os.getpid()
 
         self.ignored_commands = options.pop('ignored_commands', [])
@@ -124,7 +118,7 @@ class GrindingSatisfactionBot(commands.Bot):
         return datetime.utcnow().strftime(self.format)
     
     
-    @tasks.loop(seconds=10.0)
+    @tasks.loop(seconds=60.0)
     async def session_closed(self):
         # Creates a new session whenever the old one is closed
         if self.session.closed:
@@ -168,6 +162,7 @@ class GrindingSatisfactionBot(commands.Bot):
 
 
     async def on_command_error(self, ctx, error):
+        # Global error handler
         if isinstance(error, commands.CommandNotFound):
             await ctx.send('Command does not exist')
         else:
@@ -197,19 +192,19 @@ class GrindingSatisfactionBot(commands.Bot):
 
         if str(payload.emoji) == '✅':
             if is_order_embed(message):
-                # Getting the context
-                member = channel.guild.get_member(payload.user_id)
+                # Getting the context, worker and order objects
                 context = await self.get_context(message)
-                context.author = member
-
+                worker = channel.guild.get_member(payload.user_id)
+                # order = await self.database.get_order(return_int(channel.name))
+                # Dispaching custom events
                 if channel == self.channels['orders']:
-                    self.dispatch('order_assign', context)
+                    self.dispatch('order_assign', context, worker, order)
                 
                 elif channel.category == self.categories['in_progress']:
-                    self.dispatch('order_status_change', context)
+                    self.dispatch('order_status_change', context, worker, order)
                 
                 elif channel.category == self.categories['pending_collection']:
-                    self.dispatch('order_complete', context)
+                    self.dispatch('order_complete', context, worker, order)
     
 
     async def on_connect(self):

@@ -262,7 +262,7 @@ class Order:
     async def assign(self, employee):
         """|coro|
         
-        Assigns an order to the employee
+        Assigns the order to the employee
 
         Parameters
         ----------
@@ -276,7 +276,7 @@ class Order:
     async def unassign(self):
         """|coro|
         
-        Unassigns an order
+        Unassigns the order
         
         """
         async with self.session.patch(f'{self.url}/unassign') as resp:
@@ -324,7 +324,7 @@ class Order:
     async def edit(self, **options):
         """|coro|
 
-        Edits an order
+        Edits the order
 
         Parameters
         ----------
@@ -339,7 +339,7 @@ class Order:
     async def cancel(self):
         """|coro|
         
-        Cancels an order
+        Cancels the order
         
         """
         async with self.session.patch(f'{self.url}/cancel') as resp:
