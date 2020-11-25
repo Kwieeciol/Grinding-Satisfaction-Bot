@@ -1,10 +1,10 @@
-import asyncio
 import abc
 
 class database:
     def __init__(self, session):
         self.url = 'http://grindingsatisfaction.herokuapp.com'
         self.session = session
+
 
     async def fetch_order(self, order_id: int):
         """|coro|
@@ -33,8 +33,7 @@ class database:
         
         Returns
         ----------
-        List[:class:`~abc.Order`]
-            All of the orders in the database.
+        :class: List[`~abc.Order`]
         """
         async with self.session.get(f'{self.url}/orders') as resp:
             data = await resp.json()
@@ -79,9 +78,11 @@ class database:
         :class:`~abc.Customer`
         """
         async with self.session.get(f'{self.url}/customers/{discord_id}') as resp:
-            data = await resp.json()
-            return abc.Customer(self.session, **data)
-
+            try:
+                data = await resp.json()
+                return abc.Customer(self.session, **data)
+            except Exception:
+                return None
 
     async def fetch_customers(self):
         """|coro|
@@ -90,7 +91,7 @@ class database:
         
         Returns
         ----------
-        :class:`~abc.Customer`
+        :class: List[`~abc.Customer`]
         """
         async with self.session.get(f'{self.url}/customers') as resp:
             data = await resp.json()
@@ -127,7 +128,7 @@ class database:
         Parameters
         ----------
         discord_id: :class:`int`
-            The employee ID to look for.
+            The employee discord ID to look for.
 
         
         Returns
@@ -146,7 +147,7 @@ class database:
         
         Returns
         ----------
-        :class:`~abc.Employee`
+        :class: List[`~abc.Employee`]
         """
         async with self.session.get(f'{self.url}/employees') as resp:
             data = await resp.json()
@@ -202,7 +203,7 @@ class database:
 
         Returns
         ----------
-        List[:class:`~abc.Storage`]
+        :class: List[:class:`~abc.Storage`]
         """
         async with self.session.get(f'{self.url}/storages') as resp:
             data = await resp.json()
@@ -220,7 +221,7 @@ class database:
         Parameters
         ----------
         item_id: :class:`int`
-            The storage ID to look for.
+            The item ID to look for.
 
         
         Returns
@@ -239,7 +240,7 @@ class database:
 
         Returns
         ----------
-        List[:class:`~abc.Item`]
+        :class: List[`~abc.Item`]
         """
         async with self.session.get(f'{self.url}/prices') as resp:
             data = await resp.json()
@@ -247,4 +248,3 @@ class database:
             for item in data:
                 output.append(abc.Item(self.session, **item))
             return output
-
