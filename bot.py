@@ -67,10 +67,15 @@ class OrderContext(commands.Context):
     async def get_order(self):
         channel = self.channel
 
-        if channel.id == channels['orders']:
-            if is_order_embed(self.message):
-                order_id = return_int(self.message.embeds[0])
+        if is_order_embed(self.message):
+            if channel.id == channels['orders']:
+                order_id = return_int(self.message.embeds[0].title)
                 return await self.bot.database.fetch_order(order_id)
+    
+            if channel.category is not None:
+                if channel.category.id in categories:
+                    order_id = return_int(channel.name)
+                    return await self.bot.database.fetch_order(order_id)
 
         return None
 
