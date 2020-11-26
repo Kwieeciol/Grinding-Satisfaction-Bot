@@ -20,6 +20,5 @@ class StaffCommands(commands.Cog):
     async def on_order_complete(self, ctx: commands.Context, worker, order):
         print(ctx)
 
-    
 def setup(bot):
     bot.add_cog(StaffCommands(bot))

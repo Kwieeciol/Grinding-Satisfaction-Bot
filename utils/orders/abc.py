@@ -63,7 +63,7 @@ class Employee:
     async def promote(self):
         """|coro|
         
-        Promotes am employee
+        Promotes the employee
         
         """
         async with self.session.patch(f'{self.url}/promote') as resp:

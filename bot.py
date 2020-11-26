@@ -199,8 +199,9 @@ class GrindingSatisfactionBot(commands.Bot):
             if is_order_embed(message):
                 # Getting the context, worker and order objects
                 context = await self.get_context(message)
-                worker = channel.guild.get_member(payload.user_id)
-                # order = await self.database.get_order(return_int(channel.name))
+                worker = channel.guild.get_member(payload.user_id
+                embed = message.embeds[0]
+                # order = await self.database.get_order(return_int(embed.title))
                 # Dispaching custom events
                 if channel == self.channels['orders']:
                     self.dispatch('order_assign', context, worker, order)
